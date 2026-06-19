@@ -77,7 +77,6 @@
   a.backtop{font-size:12px; color:var(--muted); text-decoration:none;}
   .badge{display:inline-block; background:var(--accent); color:#0b0d11; font-size:11px; padding:2px 8px; border-radius:10px; margin-left:6px;}
   .svgbox{background:var(--code-bg); border:1px solid var(--border); border-radius:10px; padding:10px; margin:14px 0 10px;}
-  .legend-sw{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:middle;}
 </style>
 </head>
 <body>
@@ -102,7 +101,6 @@
   </ol>
 </nav>
 
-<!-- ============================================================ CHAPTER 2 ============================================================ -->
 <section class="chapter" id="ch2">
 <h2>Chapter 2 — Operating-System Structures & System Calls</h2>
 
@@ -168,10 +166,52 @@ A system call is how a user program asks the kernel to do something it can't do 
 <div class="arblock">
 ستة أنواع لاستدعاءات النظام: التحكم بالعمليات، التحكم بالملفات، التحكم بالأجهزة، صيانة المعلومات، الاتصالات، والحماية.
 </div>
+
+<h3 class="topic">System Calls Comparison (Windows vs. Unix)</h3>
+<div class="enblock">
+Architectural mapping of fundamental system operations between Windows API and Unix/Linux systems:
+</div>
+<table>
+  <tr>
+    <th>Category</th>
+    <th>Windows API</th>
+    <th>Unix / Linux</th>
+  </tr>
+  <tr>
+    <td>Process Control</td>
+    <td>CreateProcess(), ExitProcess(), WaitForSingleObject()</td>
+    <td>fork(), exit(), wait()</td>
+  </tr>
+  <tr>
+    <td>File Management</td>
+    <td>CreateFile(), ReadFile(), WriteFile(), CloseHandle()</td>
+    <td>open(), read(), write(), close()</td>
+  </tr>
+  <tr>
+    <td>Device Management</td>
+    <td>SetConsoleMode()</td>
+    <td>ioctl()</td>
+  </tr>
+  <tr>
+    <td>Information Maintenance</td>
+    <td>GetCurrentProcessId()</td>
+    <td>getpid()</td>
+  </tr>
+  <tr>
+    <td>Communications</td>
+    <td>CreatePipe()</td>
+    <td>pipe()</td>
+  </tr>
+  <tr>
+    <td>Protection</td>
+    <td>SetFileSecurity()</td>
+    <td>chmod()</td>
+  </tr>
+</table>
+
 <p><a class="backtop" href="#top">↑ top</a></p>
 </section>
 
-<!-- ============================================================ CHAPTER 3 ============================================================ -->
 <section class="chapter" id="ch3">
 <h2>Chapter 3 — Processes</h2>
 
@@ -206,13 +246,13 @@ Holds: process state, program counter, CPU registers, scheduling info, memory-ma
 
 <h3 class="topic">Scheduling Queues & Schedulers</h3>
 <div class="enblock">
-<strong>Job queue</strong> (all processes) → <strong>Ready queue</strong> (in memory, ready) → <strong>Device queue</strong> (waiting for I/O).<br>
+<strong>Job queue</strong> (all processes upon arrival) → <strong>Ready queue</strong> (residing in memory, ready for CPU) → <strong>Device queue</strong> (waiting for an I/O device).<br>
 <strong>Short-term scheduler</strong>: picks next process to run — fast, frequent.<br>
 <strong>Long-term scheduler</strong>: decides which jobs enter memory — slow, rare.<br>
 <strong>Medium-term scheduler</strong>: swaps a process out to reduce multiprogramming.
 </div>
 <div class="arblock">
-طابور المهام يحوي كل العمليات، طابور الجاهزية يحوي العمليات الجاهزة بالذاكرة، وطابور الأجهزة يحوي العمليات المنتظرة لجهاز. المجدول قصير المدى يختار العملية التالية بسرعة، المجدول طويل المدى يحدد أي المهام تدخل الذاكرة ويعمل ببطء، والمجدول متوسط المدى يبدّل عمليات للخارج عند امتلاء الذاكرة.
+طابور المهام يحوي كل العمليات عند وصولها، طابور الجاهزية يحوي العمليات الجاهزة بالذاكرة بانتظار المعالج، وطابور الأجهزة يحوي العمليات المنتظرة لجهاز إدخال وإخراج. المجدول قصير المدى يختار العملية التالية بسرعة، المجدول طويل المدى يحدد أي المهام تدخل الذاكرة ويعمل ببطء، والمجدول متوسط المدى يبدّل عمليات للخارج لتقليل درجة تعدد البرمجة.
 </div>
 
 <h3 class="topic">Context Switch & Process Creation/Termination</h3>
@@ -224,26 +264,37 @@ A parent creates children (PID-identified, forming a tree). Termination via <cod
 تبديل السياق يحفظ حالة العملية القديمة ويحمّل الجديدة، وهو عبء زائد بدون عمل مفيد. العملية الأم تنشئ أبناء (شجرة عمليات، كل واحد له PID). الإنهاء عبر exit()، وتجمع الأم الحالة عبر wait()، وتستطيع إنهاء الابن بـabort() (تجاوز الموارد، أو انتهاء الأم نفسها = إنهاء متسلسل).
 </div>
 
-<h3 class="topic">Interprocess Communication (IPC)</h3>
+<h3 class="topic">Interprocess Communication (IPC) Models</h3>
 <div class="enblock">
-<strong>Shared memory</strong> — common memory region read/written by both. <strong>Message passing</strong> — direct message exchange, no shared region.
+<strong>Shared memory model</strong> — establishes a common memory region mapped into the address space of cooperating processes. Processes exchange data by reading and writing directly without kernel intervention.<br>
+<strong>Message passing model</strong> — communication takes place by means of messages exchanged directly through kernel-managed ports or mailboxes. No shared memory space required.
 </div>
 <div class="arblock">
-الذاكرة المشتركة: منطقة ذاكرة تتشارك فيها العمليات. تمرير الرسائل: تبادل رسائل مباشرة بدون ذاكرة مشتركة.
+الذاكرة المشتركة: إنشاء منطقة ذاكرة مشتركة تقع ضمن مساحة العنونة للعمليات المتعاونة، ويتم تبادل البيانات بالقراءة والكتابة المباشرة دون تدخل النواة.<br>
+تمرير الرسائل: تبادل رسائل مباشرة عبر النواة باستخدام منافذ أو صناديق بريد دون الحاجة لعنونة مشتركة.
 </div>
 <p><a class="backtop" href="#top">↑ top</a></p>
 </section>
 
-<!-- ============================================================ CHAPTER 4 ============================================================ -->
 <section class="chapter" id="ch4">
 <h2>Chapter 4 — Threads & Concurrency</h2>
 
 <h3 class="topic">What is a Thread</h3>
 <div class="enblock">
-A thread has its own ID, program counter, registers, and stack — but shares code, data, and OS resources with other threads of the same process.
+A thread is the basic unit of CPU utilization. It has its own ID, program counter, registers, and stack — but shares code, data, and OS resources (such as files and signals) with other threads of the same process.
 </div>
 <div class="arblock">
-الخيط له معرّف وعداد برنامج وسجلات ومكدس خاص به، لكنه يتشارك الكود والبيانات وموارد النظام مع باقي خيوط نفس العملية.
+الخيط هو الوحدة الأساسية لاستخدام المعالج. له معرّف وعداد برنامج وسجلات ومكدس خاص به، لكنه يتشارك الكود والبيانات وموارد النظام (مثل الملفات والإشارات) مع باقي خيوط نفس العملية.
+</div>
+
+<h3 class="topic">Multithreading Application Architecture</h3>
+<div class="enblock">
+<strong>Web Browser Example:</strong> One thread displays text/images while a concurrent thread retrieves data from the network fabric.<br>
+<strong>Word Processor Example:</strong> One thread renders graphics, another responds to keystrokes, while a background thread runs spell-checking.
+</div>
+<div class="arblock">
+<strong>مثال متصفح الويب:</strong> خيط معالجة يتولى عرض النصوص والصور بينما يعمل خيط آخر متزامن على جلب البيانات من شبكة الإنترنت.<br>
+<strong>مثال معالج النصوص:</strong> خيط لعرض الرسومات، وخيط للاستجابة لمفاتيح المستخدم، وخيط ثالث يعمل بالخلفية للتدقيق الإملائي.
 </div>
 
 <h3 class="topic">Benefits of Multithreading</h3>
@@ -296,24 +347,37 @@ Only 2.5× faster despite 4 cores — the serial 20% caps the gain.
 <p><a class="backtop" href="#top">↑ top</a></p>
 </section>
 
-<!-- ============================================================ CHAPTER 5 ============================================================ -->
 <section class="chapter" id="ch5">
 <h2>Chapter 5 — CPU Scheduling (Part 1 + Part 2)</h2>
-<h4 class="sub">The Dispatcher</h4>
+
+<h3 class="topic">The Dispatcher</h3>
 <div class="enblock">
-The dispatcher gives control of the CPU to the process selected by the short-term scheduler. It performs: context switching, switching to user mode, and jumping to the proper location to restart the program. <strong>Dispatch Latency:</strong> Time taken to stop one process and start another.
+The dispatcher gives control of the CPU to the process selected by the short-term scheduler. It performs context switching, switching to user mode, and jumping to the program counter location to restart the program. <br>
+<strong>Dispatch Latency:</strong> Time overhead taken to stop one process and start another.
 </div>
 <div class="arblock">
-الـ **Dispatcher** هو الموديل البرمجي الذي يمنح التحكم بالمعالج للعملية المحددة بواسطة المجدول قصير المدى. وظائفه: تبديل السياق، الانتقال لنمط المستخدم، والقفز للموقع الصحيح لإعادة تشغيل البرنامج. **Dispatch Latency** هو الوقت المستغرق لإيقاف عملية وتشغيل أخرى (وهو عبء زائد Overhead).
+الـ Dispatcher هو الموديل الذي يمنح التحكم بالمعالج للعملية المختارة بواسطة المجدول قصير المدى. وظائفه: تبديل السياق، الانتقال لنمط المستخدم، والقفز للموقع الصحيح لإعادة تشغيل البرنامج. <br>
+<strong>Dispatch Latency:</strong> زمن العبء الإضافي المستغرق لإيقاف عملية وتشغيل أخرى.
 </div>
-<h3 class="topic">Basic Concepts</h3>
+
+<h3 class="topic">Basic Concepts & Scheduling Decisions</h3>
 <div class="enblock">
-A process alternates CPU bursts and I/O bursts. CPU-bound = few long bursts. I/O-bound = many short bursts.
-<strong>Nonpreemptive:</strong> once started, runs until done or it blocks itself.
-<strong>Preemptive:</strong> OS can take the CPU away (timeout, higher-priority arrival).
+A process alternates CPU bursts and I/O bursts. CPU scheduling decisions occur under 4 conditions:<br>
+1. Running to Waiting state (e.g., I/O request).<br>
+2. Running to Ready state (e.g., timer interrupt).<br>
+3. Waiting to Ready state (e.g., I/O completion).<br>
+4. Process termination.<br>
+<strong>Nonpreemptive Scheduling:</strong> Occurs only under conditions 1 and 4. The process keeps the CPU until it voluntary releases it.<br>
+<strong>Preemptive Scheduling:</strong> Occurs under conditions 2 and 3. The OS can forcefully reclaim the CPU, which introduces data race condition challenges.
 </div>
 <div class="arblock">
-العملية تتبادل انفجارات معالج وانفجارات إدخال/إخراج. غير الاستباقية: تستمر حتى تنتهي أو تنتظر بنفسها. الاستباقية: يمكن سحب المعالج منها قسرًا.
+العملية تتبادل انفجارات معالج وانفجارات إدخال/إخراج. تتخذ قرارات الجدولة في 4 حالات:<br>
+1. التحول من Running إلى Waiting (طلب إدخال/إخراج).<br>
+2. التحول من Running إلى Ready (مقاطعة المؤقت الزمني).<br>
+3. التحول من Waiting إلى Ready (انتهاء الإدخال/إخراج).<br>
+4. انتهاء العملية.<br>
+<strong>جدولة غير استباقية (Nonpreemptive):</strong> تحدث فقط في حالتي 1 و 4؛ حيث تحتفظ العملية بالمعالج حتى تحرره طوعاً.<br>
+<strong>جدولة استباقية (Preemptive):</strong> تحدث في حالتي 2 و 3؛ حيث يمكن للنظام سحب المعالج قسراً، مما يسبب تحديات حالة السباق على البيانات.
 </div>
 
 <h3 class="topic">Scheduling Criteria</h3>
@@ -378,10 +442,12 @@ Average turnaround    ~ 7 ms</code></pre>
 
 <h3 class="topic">3. Priority Scheduling</h3>
 <div class="enblock">
-CPU → highest priority (smaller number = higher priority). <strong>Problem:</strong> starvation. <strong>Fix:</strong> aging (raise priority the longer a process waits).
+CPU → highest priority (smaller number = higher priority). <strong>Problem:</strong> starvation. <strong>Fix:</strong> aging (raise priority the longer a process waits). <br>
+<strong>Priority Combined with Round Robin:</strong> If multiple running jobs share identical priorities, the scheduler executes them via standard Round Robin slicing using a fixed quantum time.
 </div>
 <div class="arblock">
-المعالج يُمنح للأولوية الأعلى (الرقم الأصغر = أولوية أعلى). المشكلة: التضوّر. الحل: الشيخوخة (رفع الأولوية كلما طال الانتظار).
+المعالج يُمنح للأولوية الأعلى (الرقم الأصغر = أولوية أعلى). المشكلة: التضوّر. الحل: الشيخوخة (رفع الأولوية كلما طال الانتظار). <br>
+<strong>دمج الأولوية مع خوارزمية RR:</strong> في حال تساوي الأولوية لعدة عمليات جاهزة، يتم تطبيق جدولة Round Robin بينها بالتناوب بكوانتم زمني محدد.
 </div>
 <div class="example">
 <h4>Worked Example — Priority Nonpreemptive <span class="badge">SOLVED</span></h4>
@@ -418,11 +484,12 @@ Average turnaround time = (30+5+6)/3  = 13.67 ms</code></pre>
 
 <h3 class="topic">5. Multilevel Queue & 6. Multilevel Feedback Queue (MLFQ)</h3>
 <div class="enblock">
-<strong>Multilevel queue:</strong> processes permanently split into queues (e.g. interactive vs batch), each with its own algorithm.
-<strong>MLFQ:</strong> like multilevel queue, but a process can move between queues — demoted if it uses too much CPU, promoted (aging) if it waits long.
+<strong>Multilevel queue:</strong> processes permanently split into queues (e.g. interactive vs batch), each with its own algorithm. Absolute prioritization is enforced based on queue type.
+<strong>MLFQ:</strong> like multilevel queue, but a process can move between queues — demoted if it uses too much CPU, promoted (aging) if it waits long. Defined by parameters: number of queues, scheduling algorithm for each, upgrade/demote criteria, and initial queue placement entry method.
 </div>
 <div class="arblock">
-الطابور متعدد المستويات: تقسيم دائم للعمليات لطوابير منفصلة. الطابور متعدد المستويات المرتد (MLFQ): يمكن للعملية الانتقال بين الطوابير، تُخفَّض إن استخدمت معالجًا كثيرًا، وتُرفَّع إن انتظرت طويلًا.
+الطابور متعدد المستويات: تقسيم دائم للعمليات لطوابير منفصلة لكل منها خوارزميتها، ويطبق مبدأ الأولوية المطلقة بين الطوابير.
+الطابور متعدد المستويات المرتد (MLFQ): يمكن للعملية الانتقال بين الطوابير، تُخفَّض إن استخدمت معالجًا كثيرًا، وتُرفَّع إن انتظرت طويلًا (الشيخوخة). يُعرّف بمعاملات: عدد الطوابير، خوارزمية كل طابور، معيار الترقية والتخفيض، وطريقة تحديد أول طابور تدخله المهمة.
 </div>
 <div class="example">
 <h4>Worked Example — MLFQ <span class="badge">SOLVED</span></h4>
@@ -444,31 +511,34 @@ in Q2 (pure FCFS): runs to completion, no more demotion</code></pre>
 <p><a class="backtop" href="#top">↑ top</a></p>
 </section>
 
-<!-- ============================================================ CHAPTER 6 ============================================================ -->
 <section class="chapter" id="ch6">
 <h2>Chapter 6 — Process Synchronization (Full Code Toolkit)</h2>
 
 <h3 class="topic">Race Condition</h3>
 <div class="enblock">
-Happens when multiple processes/threads touch shared data concurrently, and the result depends on execution timing.
+Happens when multiple processes/threads touch shared data concurrently, and the result depends on execution timing.<br>
+<strong>Kernel Race Conditions:</strong> Manifest inside kernel space when internal data structures (like memory lists or queues) are updated concurrently. <br>
+• <em>Nonpreemptive Kernels:</em> Immune to kernel-mode race conditions as process preemption inside kernel space is disallowed.<br>
+• <em>Preemptive Kernels:</em> Vulnerable to race conditions; require primitive locking abstractions to preserve data consistency.
 </div>
 <div class="arblock">
-تحدث عندما تصل عدة عمليات أو خيوط لبيانات مشتركة بنفس الوقت، وتعتمد النتيجة على ترتيب التنفيذ بالضبط.
+تحدث عندما تصل عدة عمليات أو خيوط لبيانات مشتركة بنفس الوقت، وتعتمد النتيجة على ترتيب التنفيذ بالضبط.<br>
+<strong>حالة السباق داخل النواة (Kernel Space):</strong> تحدث عند تعديل هياكل بيانات النواة (مثل طوابير تخصيص الذاكرة) بشكل متزامن.<br>
+• <em>النواة غير الاستباقية:</em> خالية من حالات السباق لأنها تمنع مقاطعة العمليات الجارية في نمط النواة.<br>
+• <em>النواة الاستباقية:</em> تسمح بالمقاطعة وتتطلب أقفال حماية صارمة لمنع التداخل وحماية البيانات.
 </div>
 
 <div class="codecard">
 <h4>Producer–Consumer (shared buffer + counter)</h4>
-<pre><code>// producer process
-while (true) {
-    while (counter == BUFFER_SIZE) ;   /* buffer full, wait */
+<pre><code>while (true) {
+    while (counter == BUFFER_SIZE) ;
     buffer[in] = next_produced;
     in = (in + 1) % BUFFER_SIZE;
     counter++;
 }
 
-// consumer process
 while (true) {
-    while (counter == 0) ;             /* buffer empty, wait */
+    while (counter == 0) ;
     next_consumed = buffer[out];
     out = (out + 1) % BUFFER_SIZE;
     counter--;
@@ -482,13 +552,12 @@ while (true) {
   r1 = r1 + 1                    r2 = r2 - 1
   counter = r1                   counter = r2
 
-// counter starts at 5, both run "at the same time":
 S0: producer  r1 = counter         // r1 = 5
 S1: producer  r1 = r1 + 1          // r1 = 6
 S2: consumer  r2 = counter         // r2 = 5
 S3: consumer  r2 = r2 - 1          // r2 = 4
 S4: producer  counter = r1         // counter = 6
-S5: consumer  counter = r2         // counter = 4   <- WRONG, should be 5</code></pre>
+S5: consumer  counter = r2         // counter = 4    <- WRONG, should be 5</code></pre>
 <div class="note">Fix: wrap counter++ / counter-- inside a critical section (mutex / semaphore) so the 3 steps run atomically.</div>
 </div>
 
@@ -509,23 +578,21 @@ An atomic hardware instruction: reads the old value AND sets it to true, in one 
 </div>
 <div class="codecard">
 <h4>test_and_set.c</h4>
-<pre><code>// Hardware-level atomic instruction (this whole function is one indivisible step)
-boolean test_and_set(boolean *target) {
+<pre><code>boolean test_and_set(boolean *target) {
     boolean rv = *target;
     *target = true;
     return rv;
 }
 
-// Using it to protect a critical section
 boolean lock = false;
 
 while (true) {
     while (test_and_set(&lock))
-        ;                     /* busy wait: lock was already true */
+        ;
 
     /* critical section */
 
-    lock = false;             /* release */
+    lock = false;
 
     /* remainder section */
 }</code></pre>
@@ -540,24 +607,22 @@ Atomic instruction: swaps a value only if it currently equals an expected value.
 </div>
 <div class="codecard">
 <h4>compare_and_swap.c</h4>
-<pre><code>// Hardware-level atomic instruction
-int compare_and_swap(int *value, int expected, int new_value) {
+<pre><code>int compare_and_swap(int *value, int expected, int new_value) {
     int temp = *value;
     if (*value == expected)
         *value = new_value;
     return temp;
 }
 
-// Using it to protect a critical section
 int lock = 0;
 
 while (true) {
     while (compare_and_swap(&lock, 0, 1) != 0)
-        ;                     /* busy wait: someone else holds it */
+        ;
 
     /* critical section */
 
-    lock = 0;                 /* release */
+    lock = 0;
 
     /* remainder section */
 }</code></pre>
@@ -573,12 +638,12 @@ A higher-level software lock built on top of hardware atomics. Must <code>acquir
 <div class="codecard">
 <h4>mutex.c</h4>
 <pre><code>typedef struct {
-    boolean available;   // true = free, false = locked
+    boolean available;
 } lock_t;
 
 void acquire(lock_t *lock) {
     while (!lock->available)
-        ;                     /* busy wait */
+        ;
     lock->available = false;
 }
 
@@ -586,7 +651,6 @@ void release(lock_t *lock) {
     lock->available = true;
 }
 
-// Usage
 lock_t mutex = { .available = true };
 
 while (true) {
@@ -602,10 +666,10 @@ while (true) {
 
 <h3 class="topic">Code 4 — Peterson's Solution (2 processes only)</h3>
 <div class="enblock">
-Pure software, works for exactly 2 processes. Uses shared <code>turn</code> and <code>flag[2]</code>.
+Pure software, works for exactly 2 processes. Enforces mutual exclusion by utilizing shared <code>turn</code> and <code>flag[2]</code> structures. The final write to <code>turn</code> decides which process gains critical section entrance clearance.
 </div>
 <div class="arblock">
-حل برمجي بالكامل، يعمل لعمليتين فقط. يستخدم متغيرين مشتركين: turn و flag[2].
+حل برمجي بالكامل، يعمل لعمليتين فقط. يحقق الاستثناء المتبادل بالاعتماد على متغيرين مشتركين: turn و flag[2]، وآخر عملية تكتب في المتغير المشترك turn هي من تحدد الأحقية بالدخول أولاً.
 </div>
 <div class="codecard">
 <h4>peterson.c</h4>
@@ -615,33 +679,29 @@ Pure software, works for exactly 2 processes. Uses shared <code>turn</code> and 
 int turn;
 int flag[2] = { FALSE, FALSE };
 
-// Process Pi calls this before the critical section (i = 0 or 1)
 void enter_critical_section(int i) {
-    int j = 1 - i;            // the other process
+    int j = 1 - i;
     flag[i] = TRUE;
     turn = j;
     while (flag[j] == TRUE && turn == j)
-        ;                     /* busy wait */
+        ;
 }
 
-// Process Pi calls this after the critical section
 void leave_critical_section(int i) {
     flag[i] = FALSE;
 }
 
-// Usage inside process Pi
 void process_Pi(int i) {
-    while (TRUE) {
-        enter_critical_section(i);
+  while (TRUE) {
+    enter_critical_section(i);
 
-        /* critical section */
+    /* critical section */
 
-        leave_critical_section(i);
+    leave_critical_section(i);
 
-        /* remainder section */
-    }
+    /* remainder section */
+  }
 }</code></pre>
-<div class="note">If both processes call enter_critical_section() at almost the same time, "turn" gets written by both — only the last write survives, and that decides who actually goes first.</div>
 </div>
 
 <h3 class="topic">Code 5 — Semaphore (busy-wait version)</h3>
@@ -657,7 +717,7 @@ A semaphore is an integer accessed only through <code>wait()</code> (decrement) 
 
 void wait(semaphore *S) {
     while (*S <= 0)
-        ;                     /* busy wait: wastes CPU cycles */
+        ;
     (*S)--;
 }
 
@@ -665,8 +725,7 @@ void signal(semaphore *S) {
     (*S)++;
 }
 
-// Usage: protecting a critical section
-semaphore mutex = 1;          // binary semaphore
+semaphore mutex = 1;
 
 while (true) {
     wait(&mutex);
@@ -690,14 +749,14 @@ Avoids busy-waiting. Instead of looping, a process that must wait is <strong>blo
 <h4>semaphore_blocking.c</h4>
 <pre><code>typedef struct {
     int value;
-    struct process *list;     // queue of PCBs waiting on this semaphore
+    struct process *list;
 } semaphore;
 
 void wait(semaphore *S) {
     S->value--;
     if (S->value < 0) {
-        add_this_process_to(S->list);   // change this process's PCB state to "waiting"
-        block();                        // suspend; give CPU to the scheduler
+        add_this_process_to(S->list);
+        block();
     }
 }
 
@@ -705,10 +764,9 @@ void signal(semaphore *S) {
     S->value++;
     if (S->value <= 0) {
         struct process *P = remove_one_process_from(S->list);
-        wakeup(P);                       // move P from "waiting" to "ready"
+        wakeup(P);
     }
 }</code></pre>
-<div class="note">block() suspends the calling process and hands control to the scheduler. wakeup(P) moves process P from the waiting queue back to the ready queue.</div>
 </div>
 
 <h3 class="topic">Synchronization Problems</h3>
@@ -749,7 +807,6 @@ void signal(semaphore *S) {
 <p><a class="backtop" href="#top">↑ top</a></p>
 </section>
 
-<!-- ============================================================ CHAPTER 7 ============================================================ -->
 <section class="chapter" id="ch7">
 <h2>Chapter 7 — Deadlocks</h2>
 
@@ -767,13 +824,15 @@ All 4 must hold together for a deadlock to occur.
 الاستثناء المتبادل (مورد واحد لعملية واحدة)، الحجز والانتظار (حجز مورد وانتظار آخر)، عدم السلب (تحرير طوعي فقط)، والانتظار الدائري (حلقة انتظار مغلقة). الانغلاق يحتاج الأربعة معًا.
 </div>
 
-<h3 class="topic">Resource-Allocation Graph</h3>
+<h3 class="topic">Resource-Allocation Graph & Wait-for Graphs</h3>
 <div class="enblock">
-Circles = processes, Rectangles = resources. Request edge Pi→Rj, Assignment edge Rj→Pi.
-No cycle → no deadlock. Cycle + single instance per resource → deadlock. Cycle + multiple instances → only possible deadlock.
+Circles = processes, Rectangles = resources. Request edge Pi→Rj, Assignment edge Rj→Pi.<br>
+No cycle → no deadlock. Cycle + single instance per resource → deadlock. Cycle + multiple instances → only possible deadlock.<br>
+<strong>Wait-for Graph Reduction:</strong> Under single instance resource constraints, resource nodes ($R_x$) can be stripped away. Replacing paths $P_i \rightarrow R_q \rightarrow P_j$ with a direct edge $P_i \rightarrow P_j$ shows process $P_i$ is explicitly blocked waiting for $P_j$. A deadlock exists if and only if this graph contains a cycle.
 </div>
 <div class="arblock">
-دوائر = عمليات، مستطيلات = موارد. سهم الطلب Pi→Rj، سهم التخصيص Rj→Pi. لا دورة = لا انغلاق. دورة + نسخة واحدة لكل مورد = انغلاق حتمي. دورة + نسخ متعددة = احتمال انغلاق فقط.
+دوائر = عمليات، مستطيلات = موارد. سهم الطلب Pi→Rj، سهم التخصيص Rj→Pi. لا دورة = لا انغلاق. دورة + نسخة واحدة لكل مورد = انغلاق حتمي. دورة + نسخ متعددة = احتمال انغلاق فقط.<br>
+<strong>الاختزال إلى رسم الانتظار (Wait-for Graph):</strong> في الأنظمة ذات النسخة الواحدة من المورد، يتم حذف عقد الموارد وتبسيط المسارات $P_i \rightarrow R_q \rightarrow P_j$ إلى أسهم مباشرة $P_i \rightarrow P_j$ (العملية $P_i$ تنتظر $P_j$)؛ ويحدث الانغلاق إذا وفقط إذا احتوى هذا الرسم المختزل على دورة (Cycle).
 </div>
 <div class="example">
 <h4>Worked Example — Cycle Detection <span class="badge">SOLVED</span></h4>
@@ -799,12 +858,12 @@ Path: P1→R2→P2→R1→P1 — a cycle. Both resources have 1 instance → <st
 <h3 class="topic">Banker's Algorithm</h3>
 <div class="codecard">
 <h4>Data structures</h4>
-<pre><code>int n;                 // number of processes
+<pre><code>int n;                  // number of processes
 int m;                  // number of resource types
 
-int Available[m];       // Available[j] = k -> k free instances of resource j
-int Max[n][m];          // Max[i][j] = k     -> Pi may request at most k of j
-int Allocation[n][m];   // Allocation[i][j]  -> Pi currently holds k of j
+int Available[m];       // Available[j] = k free instances of resource j
+int Max[n][m];          // Max[i][j] = Pi may request at most k of j
+int Allocation[n][m];   // Allocation[i][j] -> Pi currently holds k of j
 int Need[n][m];         // Need[i][j] = Max[i][j] - Allocation[i][j]</code></pre>
 </div>
 <div class="codecard">
@@ -822,27 +881,25 @@ int Need[n][m];         // Need[i][j] = Max[i][j] - Allocation[i][j]</code></pre
         Finish[i] = true;
     }
 
-    return all(Finish);   // true only if every process finished
+    return all(Finish);
 }</code></pre>
 </div>
 <div class="codecard">
 <h4>Resource-request algorithm — requestResources(i, Request)</h4>
 <pre><code>int requestResources(int i, int Request[m]) {
     if (Request > Need[i])
-        return ERROR;          // process asked for more than its declared max
+        return ERROR;
 
     if (Request > Available)
-        return MUST_WAIT;      // not enough resources right now
+        return MUST_WAIT;
 
-    // pretend to allocate
     Available     -= Request;
     Allocation[i] += Request;
     Need[i]       -= Request;
 
     if (isSafe())
-        return GRANTED;        // keep the new state
+        return GRANTED;
 
-    // undo: state would be unsafe
     Available     += Request;
     Allocation[i] -= Request;
     Need[i]       += Request;
@@ -877,29 +934,27 @@ Run isSafe():
   Request <= Available (3,3,2)?   YES
   Pretend:  Available=(2,3,0)  Allocation_P1=(3,0,2)  Need_P1=(0,2,0)
   Re-run isSafe() -> still SAFE -> GRANTED</code></pre>
-<div class="label" style="margin-top:8px;">AR</div>
+<div class="label">AR</div>
 <div dir="rtl" style="text-align:right;">
 نحسب Available بطرح إجمالي المحجوز من إجمالي الموارد = (3,3,2). نطبّق خوارزمية الأمان: نبحث عن عملية يمكن تلبية حاجتها بالموارد المتاحة حاليًا، نشغّلها ونضيف ما تحرره لـWork، ونكرر. الترتيب الآمن هنا: P1 ثم P3 ثم P4 ثم P0 ثم P2 — النظام أمن. عند طلب P1 للموارد (1,0,2): نتحقق أنها لا تتجاوز Need ولا تتجاوز Available، نُحدّث الجداول مؤقتًا، ثم نعيد تشغيل خوارزمية الأمان — بما أنها لا تزال أمنة، يُمنح الطلب.
 </div>
 </div>
-
-<h3 class="topic">Deadlock Detection (single instance per resource)</h3>
-<div class="enblock">Build a wait-for graph (processes only); Pi→Pj means Pi waits for Pj. Periodically search for a cycle — found cycle = deadlock. Cost: O(n²).</div>
-<div class="arblock">يُبنى رسم "الانتظار من أجل" (عمليات فقط)؛ Pi→Pj تعني انتظار Pi لـPj. يُفحص دوريًا بحثًا عن دورة؛ وجودها يعني انغلاقًا. التكلفة O(n²).</div>
 <p><a class="backtop" href="#top">↑ top</a></p>
 </section>
 
-<!-- ============================================================ CHAPTER 9 ============================================================ -->
 <section class="chapter" id="ch9">
 <h2>Chapter 9 — Main Memory (Part 1 + Part 2)</h2>
 
-<h3 class="topic">Address Binding</h3>
+<h3 class="topic">Address Binding & Memory Protection</h3>
 <div class="enblock">
-<strong>Compile time</strong> (fast, fixed location). <strong>Load time</strong> (relocatable code, bound at load). <strong>Execution time</strong> (process can move while running; needs base/limit registers; slow but flexible).
-<strong>Logical address</strong> (CPU-generated) vs <strong>Physical address</strong> (seen by memory unit) — same for compile/load binding, differ for execution-time binding.
+<strong>Memory Stall:</strong> CPU access to main memory takes multiple cycles, causing the processor to stall due to frequency differences. Solved by hardware-managed cache memory on chip.<br>
+<strong>Address Binding:</strong> Compile time (fast, fixed location), Load time (relocatable code, bound at load), Execution time (process can move; needs hardware base/limit registers; flexible). Logical addresses (CPU-generated) and physical addresses (seen by memory unit) differ only during execution-time binding paths.<br>
+<strong>Hardware Protection:</strong> The CPU checks every user-mode logical address via dedicated registers before instruction firing: <code>Base <= Address < Base + Limit</code>. Any boundary violation triggers an immediate illegal hardware exception TRAP to the kernel.
 </div>
 <div class="arblock">
-زمن الترجمة (موقع ثابت، سريع)، زمن التحميل (كود قابل لإعادة التوضع)، زمن التنفيذ (يحتاج سجلات قاعدة وحد، بطيء لكن مرن). العنوان المنطقي يختلف عن الفعلي فقط في حالة الربط وقت التنفيذ.
+<strong>توقف المعالج (Memory Stall):</strong> الوصول للذاكرة الرئيسية يستغرق دورات متعددة بسبب فرق التردد مما يجبر المعالج على الانتظار (Stall)؛ ويتم حلها عبر الذاكرة المخبئية (Cache) المدارة بالهاردوير.<br>
+<strong>ربط العناوين:</strong> زمن الترجمة (موقع ثابت، سريع)، زمن التحميل (كود قابل لإعادة التوضع عند التحميل)، وزمن التنفيذ (مرن، يمكن نقل العملية أثناء تشغيلها، ويحتاج سجلات Base/Limit). العنوان المنطقي (من المعالج) يختلف عن الفعلي (في الذاكرة) في ربط زمن التنفيذ فقط.<br>
+<strong>حماية الهاردوير:</strong> يقوم المعالج بفحص كل عنوان منطقي في نمط المستخدم بمقارنته مع السجلات: <code>Base <= العنوان < Base + Limit</code>؛ وأي تجاوز للحدود يولد Trap فوري للنظام لحماية ذاكرة النواة والعمليات الأخرى.
 </div>
 
 <h3 class="topic">MMU & Dynamic Loading/Linking</h3>
@@ -923,11 +978,14 @@ Process = 100 MB, HDD rate = 50 MB/s.
 
 <h3 class="topic">Fragmentation & Hole-Fitting</h3>
 <div class="enblock">
-<strong>External fragmentation</strong> — enough free memory total, but scattered (fixed by compaction or paging). <strong>Internal fragmentation</strong> — allocated block bigger than needed, waste inside the block itself.
+<strong>External fragmentation</strong> — enough free memory total, but scattered. Fixed by <strong>Compaction</strong> (merging holes together, valid only under dynamic execution-time relocation) or Paging.<br>
+<strong>Internal fragmentation</strong> — allocated blocks are slightly bigger than requested, creating wasted space internal to the partition blocks.<br>
 <strong>First-fit</strong>: first hole big enough. <strong>Best-fit</strong>: smallest hole big enough (least leftover). <strong>Worst-fit</strong>: largest hole (most leftover).
 </div>
 <div class="arblock">
-التجزّؤ الخارجي: مساحة كافية إجماليًا لكنها مبعثرة (يُحل بالدمج أو الترقيم). التجزّؤ الداخلي: كتلة أكبر من الحاجة فيضيع جزء داخلها. الملاءمة الأولى: أول فجوة كافية. الملاءمة الأفضل: أصغر فجوة كافية. الملاءمة الأسوأ: أكبر فجوة.
+التجزّؤ الخارجي: مساحة كافية إجماليًا لكنها مبعثرة، ويتم حلها بالدمج **Compaction** (إزاحة الكتل لتجميع المساحات الفارغة معاً، وهو متاح فقط في ربط زمن التنفيذ الديناميكي) أو بالترقيم (Paging).<br>
+التجزّؤ الداخلي: حجز كتلة ذاكرة أكبر قليلاً من حاجة العملية، فيضيع الجزء الزائد داخل نفس الكتلة دون استخدام.<br>
+الملاءمة الأولى: أول فجوة كافية. الملاءمة الأفضل: أصغر فجوة كافية. الملاءمة الأسوأ: أكبر فجوة.
 </div>
 <div class="example">
 <h4>Worked Example — First-Fit / Best-Fit / Worst-Fit <span class="badge">SOLVED</span></h4>
@@ -959,12 +1017,14 @@ WORST-FIT (largest hole):
 
 <h3 class="topic">Paging — Visual Diagram</h3>
 <div class="enblock">
-Paging removes external fragmentation by letting a process's logical memory be <strong>non-contiguous</strong>. Physical memory splits into fixed-size <strong>frames</strong>; logical memory splits into same-size <strong>pages</strong>. A <strong>page table</strong> maps page number → frame number.
+Paging removes external fragmentation by letting a process's logical memory be <strong>non-contiguous</strong>. Physical memory splits into fixed-size <strong>frames</strong> (constrained to powers of two, typically between 512 bytes and 8192 bytes); logical memory splits into same-size <strong>pages</strong>. A <strong>page table</strong> maps page number → frame number.
 </div>
 <div class="formula">Physical address = (Frame number × Frame size) + Offset</div>
 <div class="arblock">
-الترقيم يزيل التجزّؤ الخارجي بجعل الذاكرة المنطقية للعملية غير متجاورة. تُقسَّم الذاكرة الفعلية لإطارات ثابتة الحجم، والمنطقية لصفحات بنفس الحجم. جدول الصفحات يربط رقم الصفحة برقم الإطار. العنوان الفعلي = (رقم الإطار × حجم الإطار) + الإزاحة.
+الترقيم يزيل التجزّؤ الخارجي بجعل الذاكرة المنطقية للعملية غير متجاورة. تُقسَّم الذاكرة الفعلية لإطارات (Frames) ثابتة الحجم (يجب أن يكون حجمها أس 2، عادة بين 512 و 8192 بايت)، والمنطقية لصفحات (Pages) بنفس الحجم. جدول الصفحات يربط رقم الصفحة برقم الإطار. العنوان الفعلي = (رقم الإطار × حجم الإطار) + الإزاحة.
 </div>
+
+
 
 <div class="svgbox">
 <svg viewBox="0 0 860 540" xmlns="http://www.w3.org/2000/svg" width="100%">
@@ -976,19 +1036,10 @@ Paging removes external fragmentation by letting a process's logical memory be <
       <path d="M0,0 L8,4 L0,8 Z" fill="#5eb1ff"/>
     </marker>
   </defs>
-<h3 class="topic">Memory Protection & Hardware Registers</h3>
-<div class="enblock">
-<strong>Memory Stall:</strong> CPU access to main memory takes multiple cycles, causing the processor to stall. Fixed by hardware-managed cache.<br>
-<strong>Hardware Protection:</strong> Every logical address generated in user mode is checked by hardware: <code>Base <= Address < Base + Limit</code>. Any violation causes a TRAP to the OS.
-</div>
-<div class="arblock">
-<strong>توقف المعالج (Memory Stall):</strong> الوصول للذاكرة الرئيسية يستغرق دورات متعددة مما يجبر المعالج على التوقف؛ ويتم حلها عبر الذاكرة المخبئية (Cache).<br>
-<strong>حماية الهاردوير:</strong> يتم فحص كل عنوان منطقي عبر الهاردوير للتأكد من وقوعه في النطاق القانوني للعملية: <code>Base <= العنوان < Base + Limit</code>، وأي تجاوز يولد Trap للنظام لمنع تعديل بيانات النواة.
-</div>
+
   <text x="430" y="22" text-anchor="middle" font-size="16" font-weight="bold" fill="#5eb1ff">Logical → Physical Address Translation (worked example)</text>
   <text x="430" y="40" text-anchor="middle" font-size="11" fill="#9aa3b2">page size = 4 bytes, physical memory = 32 bytes (8 frames), logical address = 7</text>
 
-  <!-- Logical address -->
   <text x="190" y="62" text-anchor="middle" font-size="11" fill="#9aa3b2">Step 1 — CPU generates the logical address (binary 0111)</text>
   <rect x="60" y="70" width="120" height="55" rx="6" fill="#241a14" stroke="#ff9d5e" stroke-width="1.5"/>
   <text x="120" y="100" text-anchor="middle" font-size="20" font-weight="bold" fill="#ff9d5e" font-family="monospace">01</text>
@@ -999,14 +1050,13 @@ Paging removes external fragmentation by letting a process's logical memory be <
 
   <line x1="120" y1="125" x2="120" y2="150" stroke="#ff9d5e" stroke-width="2" marker-end="url(#arrowOrange)"/>
 
-  <!-- Page table -->
   <text x="190" y="148" text-anchor="middle" font-size="12" fill="#e8eaf0" font-weight="bold">Step 2 — look up Page Table</text>
   <rect x="60" y="155" width="260" height="135" rx="8" fill="#171a21" stroke="#2a2f3a"/>
   <rect x="72" y="166" width="236" height="24" fill="#1d2129" stroke="#2a2f3a"/>
   <text x="190" y="182" text-anchor="middle" font-size="10" fill="#9aa3b2">Page  →  Frame</text>
 
   <rect x="72" y="192" width="236" height="24" fill="#171a21" stroke="#2a2f3a"/>
-  <text x="190" y="208" text-anchor="middle" font-size="11" fill="#5c6270">Page 0  →  Frame ?  (not given)</text>
+  <text x="190" y="208" text-anchor="middle" font-size="11" fill="#5c6270">Page 0  →  Frame ?</text>
 
   <rect x="72" y="218" width="236" height="26" fill="#241a14" stroke="#ff9d5e" stroke-width="2"/>
   <text x="140" y="235" text-anchor="middle" font-size="12" font-weight="bold" fill="#ff9d5e">Page 1</text>
@@ -1014,39 +1064,31 @@ Paging removes external fragmentation by letting a process's logical memory be <
   <text x="250" y="235" text-anchor="middle" font-size="12" font-weight="bold" fill="#5eb1ff">Frame 6</text>
 
   <rect x="72" y="246" width="236" height="24" fill="#171a21" stroke="#2a2f3a"/>
-  <text x="190" y="262" text-anchor="middle" font-size="11" fill="#5c6270">Page 2  →  Frame ?  (not given)</text>
+  <text x="190" y="262" text-anchor="middle" font-size="11" fill="#5c6270">Page 2  →  Frame ?</text>
 
   <rect x="72" y="270" width="236" height="13" fill="#171a21" stroke="none"/>
-  <text x="190" y="280" text-anchor="middle" font-size="10" fill="#5c6270">Page 3  →  Frame ?  (not given)</text>
+  <text x="190" y="280" text-anchor="middle" font-size="10" fill="#5c6270">Page 3  →  Frame ?</text>
 
   <line x1="320" y1="231" x2="455" y2="333" stroke="#5eb1ff" stroke-width="2" marker-end="url(#arrowBlue)"/>
 
-  <!-- Physical memory -->
   <text x="630" y="62" text-anchor="middle" font-size="12" fill="#e8eaf0" font-weight="bold">Step 3 — Physical Memory (8 frames × 4 bytes = 32 bytes)</text>
   <rect x="460" y="70" width="340" height="334" rx="8" fill="#171a21" stroke="#2a2f3a"/>
 
-  <!-- frames 0-5 plain rows -->
   <g font-size="11" fill="#9aa3b2" font-family="monospace">
     <rect x="470" y="80" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
     <text x="630" y="102" text-anchor="middle">Frame 0   (bytes 0–3)</text>
-
     <rect x="470" y="118" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
     <text x="630" y="140" text-anchor="middle">Frame 1   (bytes 4–7)</text>
-
     <rect x="470" y="156" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
     <text x="630" y="178" text-anchor="middle">Frame 2   (bytes 8–11)</text>
-
     <rect x="470" y="194" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
     <text x="630" y="216" text-anchor="middle">Frame 3   (bytes 12–15)</text>
-
     <rect x="470" y="232" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
     <text x="630" y="254" text-anchor="middle">Frame 4   (bytes 16–19)</text>
-
     <rect x="470" y="270" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
     <text x="630" y="292" text-anchor="middle">Frame 5   (bytes 20–23)</text>
   </g>
 
-  <!-- frame 6 (highlighted, split into 4 bytes) -->
   <rect x="470" y="308" width="320" height="50" fill="#0e2433" stroke="#5eb1ff" stroke-width="2"/>
   <text x="630" y="322" text-anchor="middle" font-size="11" fill="#5eb1ff" font-weight="bold">Frame 6  (bytes 24–27)  ← target frame</text>
 
@@ -1064,11 +1106,9 @@ Paging removes external fragmentation by letting a process's logical memory be <
   <rect x="470" y="364" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
   <text x="630" y="386" text-anchor="middle" font-size="11" fill="#9aa3b2" font-family="monospace">Frame 7   (bytes 28–31)</text>
 
-  <!-- formula bar -->
   <rect x="60" y="420" width="740" height="48" rx="6" fill="#0b0d11" stroke="#ff9d5e" stroke-dasharray="4,3"/>
   <text x="430" y="449" text-anchor="middle" font-size="14" font-family="monospace" fill="#ffd9a8">Physical address = (Frame × Frame size) + Offset = (6 × 4) + 3 = 27</text>
 
-  <!-- legend -->
   <rect x="60" y="488" width="12" height="12" fill="#241a14" stroke="#ff9d5e"/>
   <text x="78" y="498" font-size="11" fill="#9aa3b2">Page number / Page table</text>
   <rect x="280" y="488" width="12" height="12" fill="#0e2433" stroke="#5eb1ff"/>
@@ -1081,10 +1121,10 @@ Paging removes external fragmentation by letting a process's logical memory be <
 
 <h3 class="topic">Page Table Implementation & TLB</h3>
 <div class="enblock">
-Each process has its own page table; <strong>PTBR</strong> points to it (updated every context switch). Without help, every access = 2 memory accesses. The <strong>TLB</strong> caches page→frame mappings for near-instant lookup.
+Each process has its own page table; <strong>PTBR</strong> (Page-Table Base Register) points to it and is updated on every context switch. Without hardware assistance, every data access requires 2 memory operations. The <strong>TLB</strong> (Translation Lookaside Buffer) caches page→frame mappings for near-instant lookup.
 </div>
 <div class="arblock">
-كل عملية لها جدول صفحات خاص؛ PTBR يُشير له ويتغير عند كل تبديل سياق. بدون تحسين، كل وصول يحتاج وصولين للذاكرة. الـTLB يخزّن مؤقتًا روابط صفحة→إطار لاستدعاء فوري تقريبًا.
+كل عملية لها جدول صفحات خاص؛ يشير إليه مسجل قاعدة جدول الصفحات PTBR ويتغير عند كل تبديل سياق. بدون دعم الهاردوير، يتطلب كل وصول للبيانات عمليتين في الذاكرة. الـ TLB مخزن مؤقت سريع الكاش يخزن روابط صفحة→إطار لتسريع الترجمة الفورية.
 </div>
 <div class="example">
 <h4>Worked Example — Effective Access Time (EAT) <span class="badge">SOLVED</span></h4>
@@ -1098,10 +1138,16 @@ Hit ratio 99%: EAT = 0.99x10 + 0.01x20 = 10.1 ns (only 1% slowdown)</code></pre>
 
 <h3 class="topic">Valid/Invalid Bit, Hierarchical Paging, Shared Pages, Segmentation</h3>
 <div class="enblock">
-<strong>Valid/invalid bit</strong> marks if a page belongs to the process's address space (access to "invalid" → trap). <strong>Hierarchical (two-level) paging</strong> pages the page table itself (address splits into p1, p2, offset) for very large address spaces. <strong>Shared pages</strong>: one physical frame referenced by multiple page tables (e.g. shared read-only code). <strong>Segmentation</strong>: like paging but based on the user's logical view (main program, functions, stack = variable-size segments); a segment table maps segment number → base + length.
+<strong>Valid/invalid bit:</strong> Protects memory partitions. `valid` implies the page belongs to the process logical space; `invalid` indicates the page is illegal or resides on disk (triggering a page fault trap if accessed). <br>
+<strong>Hierarchical (two-level) paging:</strong> Pages the page table itself for extremely large logical addresses. Splits addresses into forward-mapped p1 (outer table index), p2 (inner displacement), and page offset.<br>
+<strong>Shared pages:</strong> A single physical frame referenced by multiple page tables (e.g., read-only reentrant code). The OS ensures active frames are not swapped out if processes reference them.<br>
+<strong>Segmentation:</strong> Memory partitioning based on user logical view (main, functions, stack, variables). A segment table maps segment numbers to linear bases and lengths. Uses control registers: **STBR** (Segment-Table Base Register) pointing to physical memory tables, and **STLR** (Segment-Table Length Register) tracking program segment totals. Logical offsets $d$ must satisfy $d < \text{Limit}$ or a trap fault fires.
 </div>
 <div class="arblock">
-بت الصلاحية يحدد إن كانت الصفحة جزءًا حقيقيًا من مساحة عنونة العملية (الوصول لصفحة غير صالحة يُسبب Trap). الترقيم الهرمي يُرقّم جدول الصفحات نفسه للمساحات الكبيرة جدًا. الصفحات المشتركة: إطار فعلي واحد تُشير له عدة جداول صفحات (كود مشترك للقراءة فقط). التجزيء: شبيه بالترقيم لكنه يعتمد على رؤية المستخدم المنطقية (برنامج رئيسي، دوال، مكدس = مقاطع متغيرة الحجم)؛ جدول المقاطع يربط رقم المقطع بعنوان القاعدة وطوله.
+بت الصلاحية (Valid/Invalid Bit): يحدد صلاحية الصفحة؛ القيمة valid تعني أن الصفحة تقع في النطاق القانوني للعملية، بينما القيمة invalid تعني أنها غير صالحة أو مخزنة على القرص وتتسبب في Trap (خطأ صفحة) عند محاولة الوصول إليها.<br>
+الترقيم الهرمي (Hierarchical Paging): تقسيم جدول الصفحات نفسه إلى مستويات عند التعامل مع مساحات العنونة الضخمة، حيث يقسم العنوان إلى p1 (جدول خارجي)، p2 (جدول داخلي)، وإزاحة.<br>
+الصفحات المشتركة (Shared Pages): مشاركة إطار فعلي واحد بواسطة عدة جداول صفحات لعمليات مختلفة (مثل الأكواد غير القابلة للتعديل Reentrant Code)، وتضمن النواة عدم حذف الإطار طالما هناك عمليات تشير إليه.<br>
+التجزيء (Segmentation): تقسيم الذاكرة وفقاً لرؤية المستخدم المنطقية للبرنامج (دوال، مكدس، متغيرات). يربط جدول المقاطع رقم المقطع بعنوان القاعدة وطوله الفعلي. يعتمد على مسجلين: **STBR** (يشير لموقع الجدول بالذاكرة الفعيلة)، و **STLR** (يحدد عدد المقاطع المستخدمة)، ويجب أن تكون الإزاحة المستهدفة أصغر من طول المقطع $d < \text{Limit}$ وإلا سيحدث Trap خطأ في حماية العنونة.
 </div>
 <p><a class="backtop" href="#top">↑ top</a></p>
 </section>
