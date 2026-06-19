@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ملخص تنين — Operating Systems Full Summary</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d2129; --text:#e8eaf0; --muted:#9aa3b2;
+    --accent:#5eb1ff; --accent2:#ff9d5e; --code-bg:#0b0d11; --border:#2a2f3a;
+    --en-border:#2f6fb5; --ar-border:#b56a2f; --green:#9be39b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg); color:var(--text); font-family:"Segoe UI",Arial,Helvetica,sans-serif;
+    margin:0; line-height:1.55; font-size:16px;
+  }
+  .wrap{max-width:980px; margin:0 auto; padding:28px 22px 80px;}
+  header.top{
+    text-align:center; padding:34px 10px 26px; border-bottom:1px solid var(--border); margin-bottom:30px;
+  }
+  header.top h1{font-size:30px; margin:0 0 6px; letter-spacing:.5px;}
+  header.top .sub{color:var(--muted); font-size:14px;}
+  header.top .sub.ar{direction:rtl; font-family:"Segoe UI",Tahoma,Arial; margin-top:4px;}
+  nav.toc{
+    background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px 22px; margin-bottom:36px;
+  }
+  nav.toc h2{font-size:16px; margin:0 0 10px; color:var(--accent);}
+  nav.toc ol{margin:0; padding-left:20px; columns:2; column-gap:30px;}
+  nav.toc li{margin-bottom:6px; font-size:14px;}
+  nav.toc a{color:var(--text); text-decoration:none;}
+  nav.toc a:hover{color:var(--accent);}
+  section.chapter{
+    margin-bottom:46px; padding-top:10px; border-top:1px solid var(--border);
+  }
+  section.chapter h2{
+    font-size:23px; color:var(--accent); margin:18px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--border);
+  }
+  h3.topic{font-size:17px; margin:22px 0 8px; color:var(--accent2);}
+  h4.sub{font-size:14.5px; margin:18px 0 6px; color:var(--green);}
+  .enblock{
+    background:var(--panel); border-left:3px solid var(--en-border); border-radius:6px;
+    padding:12px 16px; margin:8px 0 10px; font-size:15px;
+  }
+  .enblock ul{margin:6px 0 0 18px; padding:0;}
+  .enblock li{margin-bottom:4px;}
+  .arblock{
+    background:var(--panel2); border-right:3px solid var(--ar-border); border-radius:6px;
+    padding:12px 16px; margin:0 0 18px; direction:rtl; text-align:right; font-size:15.5px;
+  }
+  .arblock ul{margin:6px 20px 0 0; padding:0;}
+  .arblock li{margin-bottom:4px;}
+  .label{font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); display:block; margin-bottom:4px;}
+  pre{
+    background:var(--code-bg); border:1px solid var(--border); border-radius:8px; padding:14px 16px;
+    overflow-x:auto; font-size:13.5px; margin:10px 0 18px; direction:ltr; text-align:left;
+  }
+  code{font-family:"Cascadia Code","Consolas","Courier New",monospace; color:var(--green);}
+  .example{
+    background:#161b22; border:1px solid var(--accent); border-radius:8px; padding:16px 18px; margin:14px 0 22px;
+  }
+  .example h4{margin:0 0 10px; font-size:15px; color:var(--accent);}
+  .codecard{
+    background:#14171d; border:1px solid var(--border); border-radius:8px; padding:14px 16px 4px; margin:10px 0 20px;
+  }
+  .codecard h4{margin:0 0 6px; font-size:14.5px; color:var(--accent2);}
+  table{border-collapse:collapse; width:100%; margin:10px 0 14px; font-size:14px;}
+  th,td{border:1px solid var(--border); padding:6px 10px; text-align:center;}
+  th{background:#222733; color:var(--accent2);}
+  .gantt td{font-family:monospace; background:#1b2230;}
+  .formula{
+    background:var(--code-bg); border:1px dashed var(--accent2); border-radius:6px; padding:10px 14px;
+    font-family:monospace; margin:8px 0 14px; color:#ffd9a8; font-size:14px;
+  }
+  .note{color:var(--muted); font-size:13px; margin-top:-4px; margin-bottom:14px;}
+  hr.sep{border:none; border-top:1px dotted var(--border); margin:24px 0;}
+  footer{text-align:center; color:var(--muted); font-size:12px; padding:30px 0 0;}
+  a.backtop{font-size:12px; color:var(--muted); text-decoration:none;}
+  .badge{display:inline-block; background:var(--accent); color:#0b0d11; font-size:11px; padding:2px 8px; border-radius:10px; margin-left:6px;}
+  .svgbox{background:var(--code-bg); border:1px solid var(--border); border-radius:10px; padding:10px; margin:14px 0 10px;}
+  .legend-sw{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:middle;}
+</style>
+</head>
+<body>
+<div class="wrap" id="top">
+
+<header class="top">
+  <h1>ملخص تنين — DRAGON SUMMARY</h1>
+  <div class="sub">Operating Systems — Full Course Compression — Chapters 2, 3, 4, 5, 6, 7, 9</div>
+  <div class="sub ar">الملخص الشامل لمادة نظم التشغيل — كل الفصول المهمة، كل الأكواد، كل الأمثلة المحلولة</div>
+</header>
+
+<nav class="toc">
+  <h2>Table of Contents — الفهرس</h2>
+  <ol>
+    <li><a href="#ch2">Ch.2 — OS Structures & System Calls</a></li>
+    <li><a href="#ch3">Ch.3 — Processes</a></li>
+    <li><a href="#ch4">Ch.4 — Threads & Concurrency</a></li>
+    <li><a href="#ch5">Ch.5 — CPU Scheduling (Part 1 + 2)</a></li>
+    <li><a href="#ch6">Ch.6 — Process Synchronization (full code)</a></li>
+    <li><a href="#ch7">Ch.7 — Deadlocks</a></li>
+    <li><a href="#ch9">Ch.9 — Main Memory + Paging Visualization</a></li>
+  </ol>
+</nav>
+
+<!-- ============================================================ CHAPTER 2 ============================================================ -->
+<section class="chapter" id="ch2">
+<h2>Chapter 2 — Operating-System Structures & System Calls</h2>
+
+<h3 class="topic">Boot Sequence</h3>
+<div class="enblock">
+BIOS/UEFI → POST (hardware self-test) → finds a bootable device → Boot loader runs and finds the kernel → Kernel loads & initializes drivers/memory → Kernel starts the <strong>init process</strong> (PID 1) → init starts services, daemons, and the GUI.
+</div>
+<div class="arblock">
+تسلسل الإقلاع: الـ BIOS/UEFI يفحص الهاردوير (POST) ثم يبحث عن جهاز إقلاع، فيعمل محمّل الإقلاع الذي يجد النواة ويحمّلها، ثم تهيّئ النواة السائقات والذاكرة وتبدأ أول عملية مستخدم (init، رقمها 1) التي تشغّل بقية الخدمات وواجهة المستخدم.
+</div>
+
+<h3 class="topic">OS Services</h3>
+<div class="enblock">
+<strong>Help the user:</strong> User interface (GUI/CLI/touch), program execution, I/O operations, file-system manipulation, communications, error detection.<br>
+<strong>Help the system:</strong> resource allocation, logging/accounting, protection & security.
+</div>
+<div class="arblock">
+خدمات تساعد المستخدم: واجهة المستخدم، تنفيذ البرامج، عمليات الإدخال/الإخراج، التعامل مع الملفات، الاتصال بين العمليات، اكتشاف الأخطاء. خدمات تساعد النظام: توزيع الموارد، تسجيل الاستخدام، والحماية والأمان.
+</div>
+
+<h3 class="topic">System Calls</h3>
+<div class="enblock">
+A system call is how a user program asks the kernel to do something it can't do itself (open a file, create a process). Usually written in C/C++ or assembly.
+</div>
+<div class="arblock">
+استدعاء النظام هو الطريقة التي يطلب بها برنامج المستخدم من النواة تنفيذ عملية لا يستطيع تنفيذها بنفسه، مثل فتح ملف أو إنشاء عملية جديدة.
+</div>
+
+<div class="codecard">
+<h4>cp source_file.txt destination_file.txt</h4>
+<pre><code>cp source_file.txt destination_file.txt</code></pre>
+<div class="note">This single shell command triggers system calls internally: open(), read(), write(), close().</div>
+</div>
+
+<div class="example">
+<h4>Worked Example — Steps of a System Call <span class="badge">SOLVED</span></h4>
+<div class="label">EN</div>
+<code>read(fd, buffer, nbytes)</code> reads n bytes from a file into a buffer. 11 steps:
+<pre><code>1-3:  push parameters (fd, buffer, nbytes) onto the stack
+4:    call the library routine "read"
+5:    place the system-call code number for read into a register
+6:    TRAP into the operating system (switch to kernel mode)
+7-8:  OS saves user state, calls the correct handler routine
+9-10: handler finishes, control returns to the user program
+11:   pop the parameters off the stack</code></pre>
+<div class="label" style="margin-top:8px;">AR</div>
+<div dir="rtl" style="text-align:right;">
+استدعاء read(fd, buffer, nbytes) يقرأ عدد بايتات من ملف لداخل buffer، وله 11 خطوة: دفع المعاملات على المكدس (1-3)، استدعاء روتين المكتبة (4)، وضع رمز الاستدعاء في سجل (5)، حدوث Trap للانتقال لنمط النواة (6)، حفظ النواة لحالة المستخدم واستدعاء المعالج المناسب (7-8)، عودة السيطرة للمستخدم (9-10)، وسحب المعاملات من المكدس (11).
+</div>
+</div>
+
+<h3 class="topic">Categories of System Calls</h3>
+<div class="enblock">
+<ol>
+<li><strong>Process control</strong> — create/terminate, load/execute, wait, allocate/free memory.</li>
+<li><strong>File management</strong> — create/delete/open/close/read/write, get/set attributes.</li>
+<li><strong>Device management</strong> — request/release device, read/write, get/set attributes.</li>
+<li><strong>Information maintenance</strong> — get/set time, system data, process attributes.</li>
+<li><strong>Communications</strong> — create/delete connection, send/receive messages.</li>
+<li><strong>Protection</strong> — set/get permissions, allow/deny access.</li>
+</ol>
+</div>
+<div class="arblock">
+ستة أنواع لاستدعاءات النظام: التحكم بالعمليات، التحكم بالملفات، التحكم بالأجهزة، صيانة المعلومات، الاتصالات، والحماية.
+</div>
+<p><a class="backtop" href="#top">↑ top</a></p>
+</section>
+
+<!-- ============================================================ CHAPTER 3 ============================================================ -->
+<section class="chapter" id="ch3">
+<h2>Chapter 3 — Processes</h2>
+
+<h3 class="topic">Process Memory Layout</h3>
+<div class="enblock">
+<ul>
+<li><strong>Text</strong> — the executable code (fixed).</li>
+<li><strong>Data</strong> — global variables.</li>
+<li><strong>Heap</strong> — dynamically allocated memory at run time.</li>
+<li><strong>Stack</strong> — function parameters, return addresses, local variables. Each call pushes an activation record; popped on return.</li>
+</ul>
+</div>
+<div class="arblock">
+تتكون العملية في الذاكرة من 4 أقسام: قسم النص (الكود)، قسم البيانات (المتغيرات العامة)، الكومة Heap (ذاكرة تُحجز ديناميكيًا)، والمكدس Stack (بيانات مؤقتة كمعاملات الدوال، تُدفع سجلة تنشيط جديدة عند كل استدعاء وتُسحب عند العودة).
+</div>
+
+<h3 class="topic">Process States</h3>
+<div class="enblock">
+New → Ready → Running → (Waiting ↔ Ready) → Terminated.
+</div>
+<div class="arblock">
+حالات العملية: جديدة، جاهزة، قيد التنفيذ، منتظرة (لحدث كـI/O)، ومنتهية.
+</div>
+
+<h3 class="topic">Process Control Block (PCB)</h3>
+<div class="enblock">
+Holds: process state, program counter, CPU registers, scheduling info, memory-management info, accounting info, I/O status info.
+</div>
+<div class="arblock">
+كتلة التحكم بالعملية (PCB) تحفظ: حالة العملية، عداد البرنامج، السجلات، معلومات الجدولة، إدارة الذاكرة، المحاسبة، وحالة الإدخال/الإخراج.
+</div>
+
+<h3 class="topic">Scheduling Queues & Schedulers</h3>
+<div class="enblock">
+<strong>Job queue</strong> (all processes) → <strong>Ready queue</strong> (in memory, ready) → <strong>Device queue</strong> (waiting for I/O).<br>
+<strong>Short-term scheduler</strong>: picks next process to run — fast, frequent.<br>
+<strong>Long-term scheduler</strong>: decides which jobs enter memory — slow, rare.<br>
+<strong>Medium-term scheduler</strong>: swaps a process out to reduce multiprogramming.
+</div>
+<div class="arblock">
+طابور المهام يحوي كل العمليات، طابور الجاهزية يحوي العمليات الجاهزة بالذاكرة، وطابور الأجهزة يحوي العمليات المنتظرة لجهاز. المجدول قصير المدى يختار العملية التالية بسرعة، المجدول طويل المدى يحدد أي المهام تدخل الذاكرة ويعمل ببطء، والمجدول متوسط المدى يبدّل عمليات للخارج عند امتلاء الذاكرة.
+</div>
+
+<h3 class="topic">Context Switch & Process Creation/Termination</h3>
+<div class="enblock">
+Context switch = save old process state, load new process state. Pure overhead.
+A parent creates children (PID-identified, forming a tree). Termination via <code>exit()</code>; parent collects status via <code>wait()</code>; parent can force-kill via <code>abort()</code> (e.g. child exceeded resources, or parent itself exits → cascading termination).
+</div>
+<div class="arblock">
+تبديل السياق يحفظ حالة العملية القديمة ويحمّل الجديدة، وهو عبء زائد بدون عمل مفيد. العملية الأم تنشئ أبناء (شجرة عمليات، كل واحد له PID). الإنهاء عبر exit()، وتجمع الأم الحالة عبر wait()، وتستطيع إنهاء الابن بـabort() (تجاوز الموارد، أو انتهاء الأم نفسها = إنهاء متسلسل).
+</div>
+
+<h3 class="topic">Interprocess Communication (IPC)</h3>
+<div class="enblock">
+<strong>Shared memory</strong> — common memory region read/written by both. <strong>Message passing</strong> — direct message exchange, no shared region.
+</div>
+<div class="arblock">
+الذاكرة المشتركة: منطقة ذاكرة تتشارك فيها العمليات. تمرير الرسائل: تبادل رسائل مباشرة بدون ذاكرة مشتركة.
+</div>
+<p><a class="backtop" href="#top">↑ top</a></p>
+</section>
+
+<!-- ============================================================ CHAPTER 4 ============================================================ -->
+<section class="chapter" id="ch4">
+<h2>Chapter 4 — Threads & Concurrency</h2>
+
+<h3 class="topic">What is a Thread</h3>
+<div class="enblock">
+A thread has its own ID, program counter, registers, and stack — but shares code, data, and OS resources with other threads of the same process.
+</div>
+<div class="arblock">
+الخيط له معرّف وعداد برنامج وسجلات ومكدس خاص به، لكنه يتشارك الكود والبيانات وموارد النظام مع باقي خيوط نفس العملية.
+</div>
+
+<h3 class="topic">Benefits of Multithreading</h3>
+<div class="enblock">
+Responsiveness, Resource Sharing, Economy (cheaper than processes), Scalability (parallel on multiple cores).
+</div>
+<div class="arblock">
+الفوائد: الاستجابة، مشاركة الموارد، الاقتصادية، وقابلية التوسع على أنوية متعددة.
+</div>
+
+<h3 class="topic">Multithreading Models</h3>
+<div class="enblock">
+<strong>Many-to-One</strong> — no true parallelism, one block stalls everything.
+<strong>One-to-One</strong> — true parallelism, costly thread creation.
+<strong>Many-to-Many</strong> — best of both.
+</div>
+<div class="arblock">
+Many-to-One: لا يوجد توازي حقيقي. One-to-One: توازي حقيقي لكن تكلفة إنشاء أعلى. Many-to-Many: يجمع مزايا النموذجين.
+</div>
+
+<h3 class="topic">Concurrency vs Parallelism</h3>
+<div class="enblock">
+<strong>Concurrency</strong>: progress on multiple tasks over overlapping time (may just interleave on one core).
+<strong>Parallelism</strong>: tasks literally execute at the same instant on separate cores.
+</div>
+<div class="arblock">
+التزامن: تقدم عدة مهام خلال فترات متداخلة (قد تتبادل المعالج فقط). التوازي: تنفيذ فعلي بنفس اللحظة على أنوية مختلفة.
+</div>
+
+<h3 class="topic">Amdahl's Law</h3>
+<div class="formula">Speedup = 1 / ( S + (1 − S)/N )</div>
+<div class="enblock">
+S = serial fraction of the task, N = number of cores.
+</div>
+<div class="arblock">
+S هي النسبة التسلسلية التي لا يمكن تسريعها، N عدد الأنوية.
+</div>
+<div class="example">
+<h4>Worked Example — Amdahl's Law <span class="badge">SOLVED</span></h4>
+<div class="label">EN</div>
+Matrix multiply: Step1 (parallelizable) = 80%, Step2 (serial) = 20%. Quad-core (N=4):
+<pre><code>S = 0.20,  N = 4
+Speedup = 1 / (0.20 + 0.80/4) = 1 / 0.40 = 2.5</code></pre>
+Only 2.5× faster despite 4 cores — the serial 20% caps the gain.
+<div class="label" style="margin-top:8px;">AR</div>
+<div dir="rtl" style="text-align:right;">
+الخطوة الأولى 80% قابلة للتوازي والثانية 20% تسلسلية. مع 4 أنوية: التسريع = 1 ÷ (0.20 + 0.80/4) = 2.5 مرة فقط، لأن الجزء التسلسلي يحدّ من الفائدة القصوى.
+</div>
+</div>
+<p><a class="backtop" href="#top">↑ top</a></p>
+</section>
+
+<!-- ============================================================ CHAPTER 5 ============================================================ -->
+<section class="chapter" id="ch5">
+<h2>Chapter 5 — CPU Scheduling (Part 1 + Part 2)</h2>
+<h4 class="sub">The Dispatcher</h4>
+<div class="enblock">
+The dispatcher gives control of the CPU to the process selected by the short-term scheduler. It performs: context switching, switching to user mode, and jumping to the proper location to restart the program. <strong>Dispatch Latency:</strong> Time taken to stop one process and start another.
+</div>
+<div class="arblock">
+الـ **Dispatcher** هو الموديل البرمجي الذي يمنح التحكم بالمعالج للعملية المحددة بواسطة المجدول قصير المدى. وظائفه: تبديل السياق، الانتقال لنمط المستخدم، والقفز للموقع الصحيح لإعادة تشغيل البرنامج. **Dispatch Latency** هو الوقت المستغرق لإيقاف عملية وتشغيل أخرى (وهو عبء زائد Overhead).
+</div>
+<h3 class="topic">Basic Concepts</h3>
+<div class="enblock">
+A process alternates CPU bursts and I/O bursts. CPU-bound = few long bursts. I/O-bound = many short bursts.
+<strong>Nonpreemptive:</strong> once started, runs until done or it blocks itself.
+<strong>Preemptive:</strong> OS can take the CPU away (timeout, higher-priority arrival).
+</div>
+<div class="arblock">
+العملية تتبادل انفجارات معالج وانفجارات إدخال/إخراج. غير الاستباقية: تستمر حتى تنتهي أو تنتظر بنفسها. الاستباقية: يمكن سحب المعالج منها قسرًا.
+</div>
+
+<h3 class="topic">Scheduling Criteria</h3>
+<div class="enblock">
+CPU utilization (max), Throughput (max), Turnaround time (min), Waiting time (min), Response time (min).
+</div>
+<div class="arblock">
+استخدام المعالج (زيادة)، الإنتاجية (زيادة)، زمن الدوران (تقليل)، زمن الانتظار (تقليل)، زمن الاستجابة (تقليل).
+</div>
+
+<h3 class="topic">1. First-Come First-Served (FCFS)</h3>
+<div class="enblock">
+Simple FIFO, nonpreemptive. Problem: <strong>convoy effect</strong> — short processes wait behind long ones.
+</div>
+<div class="arblock">
+طابور FIFO بسيط وغير استباقي. مشكلته الأساسية تأثير القافلة: العمليات القصيرة تنتظر خلف الطويلة.
+</div>
+<div class="example">
+<h4>Worked Example — FCFS <span class="badge">SOLVED</span></h4>
+<table class="gantt">
+<tr><th>Process</th><th>Arrival</th><th>Burst</th></tr>
+<tr><td>P1</td><td>0</td><td>24</td></tr><tr><td>P2</td><td>2</td><td>3</td></tr><tr><td>P3</td><td>4</td><td>3</td></tr>
+</table>
+<table class="gantt"><tr><td>P1 (0–24)</td><td>P2 (24–27)</td><td>P3 (27–30)</td></tr></table>
+<pre><code>Waiting:    P1=0  P2=24-2=22  P3=27-4=23   ->  avg = 15 ms
+Turnaround: P1=24 P2=27-2=25  P3=30-4=26   ->  avg = 25 ms</code></pre>
+<div class="label">AR</div>
+<div dir="rtl" style="text-align:right;">P1 من 0-24، P2 من 24-27، P3 من 27-30. متوسط الانتظار 15 مللي ثانية، متوسط الدوران 25 مللي ثانية.</div>
+</div>
+
+<h3 class="topic">2. Shortest Job First (SJF) / Shortest Remaining Time First (SRTF)</h3>
+<div class="enblock">
+Runs the shortest next CPU burst first. <strong>Nonpreemptive:</strong> runs to completion once started. <strong>Preemptive (SRTF):</strong> a new shorter process preempts the running one. Minimizes average waiting time if bursts are known.
+</div>
+<div class="arblock">
+تُنفّذ العملية ذات أقصر انفجار معالج تالٍ أولًا. النسخة غير الاستباقية تكمل التنفيذ كاملًا. النسخة الاستباقية SRTF تُقاطع العملية الجارية إذا وصلت عملية أقصر.
+</div>
+<div class="example">
+<h4>Worked Example — SJF Nonpreemptive <span class="badge">SOLVED</span></h4>
+<table class="gantt"><tr><th>Process</th><th>Arrival</th><th>Burst</th></tr>
+<tr><td>P1</td><td>0</td><td>7</td></tr><tr><td>P2</td><td>2</td><td>4</td></tr><tr><td>P3</td><td>4</td><td>1</td></tr><tr><td>P4</td><td>5</td><td>4</td></tr></table>
+<table class="gantt"><tr><td>P1 (0–7)</td><td>P3 (7–8)</td><td>P2 (8–12)</td><td>P4 (12–16)</td></tr></table>
+<pre><code>At t=7: ready queue has P2(4), P3(1), P4(4) -> pick shortest = P3
+Waiting:    P1=0  P2=6  P3=3  P4=7   -> avg = 4 ms
+Turnaround: P1=7  P2=10 P3=4  P4=11  -> avg = 8 ms</code></pre>
+<div class="label">AR</div>
+<div dir="rtl" style="text-align:right;">عند الزمن 7 يكون الطابور: P2(متبقي4)، P3(متبقي1)، P4(متبقي4)، فيُختار P3 الأقصر. متوسط الانتظار 4، متوسط الدوران 8 مللي ثانية.</div>
+</div>
+<div class="example">
+<h4>Worked Example — SRTF Preemptive <span class="badge">SOLVED</span></h4>
+<div class="note">Same processes, preemption allowed.</div>
+<table class="gantt"><tr><td>P1(0–2)</td><td>P2(2–4)</td><td>P3(4–5)</td><td>P2(5–7)</td><td>P4(7–11)</td><td>P1(11–16)</td></tr></table>
+<pre><code>t=2: P2 arrives, burst 4 < P1 remaining 5 -> preempt to P2
+t=4: P3 arrives, burst 1 < P2 remaining 2 -> preempt to P3
+t=5: P3 done -> resume P2 (remaining 2)
+t=7: P2 done -> run P4, then P1 (remaining 5, runs last)
+Average waiting time  ~ 3 ms
+Average turnaround    ~ 7 ms</code></pre>
+<div class="label">AR</div>
+<div dir="rtl" style="text-align:right;">العملية الجارية تُقاطَع فورًا إذا وصلت عملية بانفجار أقصر من باقي وقتها. الترتيب: P1 تُقاطَع بـP2، وP2 تُقاطَع بـP3، وبعد انتهاء P3 تعود P2، ثم P4، وأخيرًا P1 (الأطول).</div>
+</div>
+
+<h3 class="topic">3. Priority Scheduling</h3>
+<div class="enblock">
+CPU → highest priority (smaller number = higher priority). <strong>Problem:</strong> starvation. <strong>Fix:</strong> aging (raise priority the longer a process waits).
+</div>
+<div class="arblock">
+المعالج يُمنح للأولوية الأعلى (الرقم الأصغر = أولوية أعلى). المشكلة: التضوّر. الحل: الشيخوخة (رفع الأولوية كلما طال الانتظار).
+</div>
+<div class="example">
+<h4>Worked Example — Priority Nonpreemptive <span class="badge">SOLVED</span></h4>
+<table class="gantt"><tr><th>Process</th><th>Burst</th><th>Priority</th></tr>
+<tr><td>P1</td><td>10</td><td>3</td></tr><tr><td>P2</td><td>1</td><td>1</td></tr><tr><td>P3</td><td>2</td><td>4</td></tr><tr><td>P4</td><td>1</td><td>5</td></tr><tr><td>P5</td><td>5</td><td>2</td></tr></table>
+<div class="note">All arrive at t=0. Run order: P2(1)→P5(2)→P1(3)→P3(4)→P4(5)</div>
+<table class="gantt"><tr><td>P2(0–1)</td><td>P5(1–6)</td><td>P1(6–16)</td><td>P3(16–18)</td><td>P4(18–19)</td></tr></table>
+<pre><code>Waiting: P2=0 P5=1 P1=6 P3=16 P4=18
+Average waiting time = (0+1+6+16+18)/5 = 8.2 ms</code></pre>
+<div class="label">AR</div>
+<div dir="rtl" style="text-align:right;">كل العمليات تصل عند الصفر فيُرتَّب التنفيذ حسب الأولوية فقط. متوسط زمن الانتظار = 8.2 مللي ثانية.</div>
+</div>
+
+<h3 class="topic">4. Round Robin (RR)</h3>
+<div class="enblock">
+FCFS + preemption with a fixed time quantum q. Larger q → behaves like FCFS. Smaller q → more context-switch overhead.
+</div>
+<div class="arblock">
+مثل FCFS لكن استباقية بكوانتم زمني ثابت. كوانتم كبير ⇐ يتصرف كـFCFS، كوانتم صغير ⇐ كلفة تبديل سياق أعلى.
+</div>
+<div class="example">
+<h4>Worked Example — Round Robin, q=4 <span class="badge">SOLVED</span></h4>
+<table class="gantt"><tr><th>Process</th><th>Arrival</th><th>Burst</th></tr>
+<tr><td>P1</td><td>0</td><td>24</td></tr><tr><td>P2</td><td>2</td><td>3</td></tr><tr><td>P3</td><td>4</td><td>3</td></tr></table>
+<table class="gantt"><tr><td>P1(0–4)</td><td>P2(4–7)</td><td>P3(7–10)</td><td>P1(10–30)</td></tr></table>
+<pre><code>P2,P3 finish in 1 quantum each (burst 3 < q=4)
+P1 needs 24: runs 4, returns later to finish remaining 20
+
+Average waiting time    = (6+2+3)/3   = 3.67 ms
+Average turnaround time = (30+5+6)/3  = 13.67 ms</code></pre>
+<div class="label">AR</div>
+<div dir="rtl" style="text-align:right;">P1 تأخذ أول 4 وحدات، ثم تكمل P2 و P3 (أقل من الكوانتم)، ثم تعود P1 لتُكمّل الـ20 المتبقية. متوسط الانتظار 3.67، متوسط الدوران 13.67 مللي ثانية.</div>
+</div>
+
+<h3 class="topic">5. Multilevel Queue & 6. Multilevel Feedback Queue (MLFQ)</h3>
+<div class="enblock">
+<strong>Multilevel queue:</strong> processes permanently split into queues (e.g. interactive vs batch), each with its own algorithm.
+<strong>MLFQ:</strong> like multilevel queue, but a process can move between queues — demoted if it uses too much CPU, promoted (aging) if it waits long.
+</div>
+<div class="arblock">
+الطابور متعدد المستويات: تقسيم دائم للعمليات لطوابير منفصلة. الطابور متعدد المستويات المرتد (MLFQ): يمكن للعملية الانتقال بين الطوابير، تُخفَّض إن استخدمت معالجًا كثيرًا، وتُرفَّع إن انتظرت طويلًا.
+</div>
+<div class="example">
+<h4>Worked Example — MLFQ <span class="badge">SOLVED</span></h4>
+<div class="note">Q0 = RR(8ms), Q1 = RR(16ms), Q2 = FCFS.</div>
+<pre><code>new job -> enters Q0
+    runs for up to 8ms
+    finished?            -> DONE
+    not finished         -> demote to Q1
+
+in Q1:
+    runs for up to 16 more ms
+    finished?            -> DONE
+    not finished         -> demote to Q2
+
+in Q2 (pure FCFS): runs to completion, no more demotion</code></pre>
+<div class="label">AR</div>
+<div dir="rtl" style="text-align:right;">مهمة جديدة تدخل Q0 وتأخذ 8ms؛ إن لم تنتهِ تُخفَّض لـQ1 (16ms إضافية)؛ إن لم تنتهِ بعد ذلك تُخفَّض لـQ2 الذي يكمل العمل بنظام FCFS بدون تخفيض آخر.</div>
+</div>
+<p><a class="backtop" href="#top">↑ top</a></p>
+</section>
+
+<!-- ============================================================ CHAPTER 6 ============================================================ -->
+<section class="chapter" id="ch6">
+<h2>Chapter 6 — Process Synchronization (Full Code Toolkit)</h2>
+
+<h3 class="topic">Race Condition</h3>
+<div class="enblock">
+Happens when multiple processes/threads touch shared data concurrently, and the result depends on execution timing.
+</div>
+<div class="arblock">
+تحدث عندما تصل عدة عمليات أو خيوط لبيانات مشتركة بنفس الوقت، وتعتمد النتيجة على ترتيب التنفيذ بالضبط.
+</div>
+
+<div class="codecard">
+<h4>Producer–Consumer (shared buffer + counter)</h4>
+<pre><code>// producer process
+while (true) {
+    while (counter == BUFFER_SIZE) ;   /* buffer full, wait */
+    buffer[in] = next_produced;
+    in = (in + 1) % BUFFER_SIZE;
+    counter++;
+}
+
+// consumer process
+while (true) {
+    while (counter == 0) ;             /* buffer empty, wait */
+    next_consumed = buffer[out];
+    out = (out + 1) % BUFFER_SIZE;
+    counter--;
+}</code></pre>
+</div>
+
+<div class="codecard">
+<h4>Why counter++ / counter-- races</h4>
+<pre><code>counter++  compiles to:        counter--  compiles to:
+  r1 = counter                   r2 = counter
+  r1 = r1 + 1                    r2 = r2 - 1
+  counter = r1                   counter = r2
+
+// counter starts at 5, both run "at the same time":
+S0: producer  r1 = counter         // r1 = 5
+S1: producer  r1 = r1 + 1          // r1 = 6
+S2: consumer  r2 = counter         // r2 = 5
+S3: consumer  r2 = r2 - 1          // r2 = 4
+S4: producer  counter = r1         // counter = 6
+S5: consumer  counter = r2         // counter = 4   <- WRONG, should be 5</code></pre>
+<div class="note">Fix: wrap counter++ / counter-- inside a critical section (mutex / semaphore) so the 3 steps run atomically.</div>
+</div>
+
+<h3 class="topic">Critical Section — 3 Required Properties</h3>
+<div class="enblock">
+<strong>Mutual Exclusion</strong> (only 1 process in CS at a time), <strong>Progress</strong> (entry decision can't be postponed forever), <strong>Bounded Waiting</strong> (a cap on how many others can enter before you get your turn).
+</div>
+<div class="arblock">
+الاستثناء المتبادل (عملية واحدة فقط بالمنطقة الحرجة)، التقدم (لا يجوز تأجيل قرار الدخول للأبد)، والانتظار المحدود (حد أعلى لدخول عمليات أخرى قبل دورك).
+</div>
+
+<h3 class="topic">Code 1 — test_and_set()</h3>
+<div class="enblock">
+An atomic hardware instruction: reads the old value AND sets it to true, in one uninterruptible step. Used to build a spinlock.
+</div>
+<div class="arblock">
+تعليمة هاردوير ذرية: تقرأ القيمة القديمة وتضبطها على true بخطوة واحدة غير قابلة للمقاطعة، تُستخدم لبناء قفل دوّار (Spinlock).
+</div>
+<div class="codecard">
+<h4>test_and_set.c</h4>
+<pre><code>// Hardware-level atomic instruction (this whole function is one indivisible step)
+boolean test_and_set(boolean *target) {
+    boolean rv = *target;
+    *target = true;
+    return rv;
+}
+
+// Using it to protect a critical section
+boolean lock = false;
+
+while (true) {
+    while (test_and_set(&lock))
+        ;                     /* busy wait: lock was already true */
+
+    /* critical section */
+
+    lock = false;             /* release */
+
+    /* remainder section */
+}</code></pre>
+</div>
+
+<h3 class="topic">Code 2 — compare_and_swap()</h3>
+<div class="enblock">
+Atomic instruction: swaps a value only if it currently equals an expected value.
+</div>
+<div class="arblock">
+تعليمة ذرية: تُبدّل القيمة فقط إذا كانت تساوي قيمة متوقعة.
+</div>
+<div class="codecard">
+<h4>compare_and_swap.c</h4>
+<pre><code>// Hardware-level atomic instruction
+int compare_and_swap(int *value, int expected, int new_value) {
+    int temp = *value;
+    if (*value == expected)
+        *value = new_value;
+    return temp;
+}
+
+// Using it to protect a critical section
+int lock = 0;
+
+while (true) {
+    while (compare_and_swap(&lock, 0, 1) != 0)
+        ;                     /* busy wait: someone else holds it */
+
+    /* critical section */
+
+    lock = 0;                 /* release */
+
+    /* remainder section */
+}</code></pre>
+</div>
+
+<h3 class="topic">Code 3 — Mutex Lock</h3>
+<div class="enblock">
+A higher-level software lock built on top of hardware atomics. Must <code>acquire()</code> before the critical section, <code>release()</code> after.
+</div>
+<div class="arblock">
+قفل برمجي أعلى مستوى، مبني فوق تعليمات الهاردوير الذرية. يجب حجزه قبل المنطقة الحرجة وتحريره بعدها.
+</div>
+<div class="codecard">
+<h4>mutex.c</h4>
+<pre><code>typedef struct {
+    boolean available;   // true = free, false = locked
+} lock_t;
+
+void acquire(lock_t *lock) {
+    while (!lock->available)
+        ;                     /* busy wait */
+    lock->available = false;
+}
+
+void release(lock_t *lock) {
+    lock->available = true;
+}
+
+// Usage
+lock_t mutex = { .available = true };
+
+while (true) {
+    acquire(&mutex);
+
+    /* critical section */
+
+    release(&mutex);
+
+    /* remainder section */
+}</code></pre>
+</div>
+
+<h3 class="topic">Code 4 — Peterson's Solution (2 processes only)</h3>
+<div class="enblock">
+Pure software, works for exactly 2 processes. Uses shared <code>turn</code> and <code>flag[2]</code>.
+</div>
+<div class="arblock">
+حل برمجي بالكامل، يعمل لعمليتين فقط. يستخدم متغيرين مشتركين: turn و flag[2].
+</div>
+<div class="codecard">
+<h4>peterson.c</h4>
+<pre><code>#define TRUE  1
+#define FALSE 0
+
+int turn;
+int flag[2] = { FALSE, FALSE };
+
+// Process Pi calls this before the critical section (i = 0 or 1)
+void enter_critical_section(int i) {
+    int j = 1 - i;            // the other process
+    flag[i] = TRUE;
+    turn = j;
+    while (flag[j] == TRUE && turn == j)
+        ;                     /* busy wait */
+}
+
+// Process Pi calls this after the critical section
+void leave_critical_section(int i) {
+    flag[i] = FALSE;
+}
+
+// Usage inside process Pi
+void process_Pi(int i) {
+    while (TRUE) {
+        enter_critical_section(i);
+
+        /* critical section */
+
+        leave_critical_section(i);
+
+        /* remainder section */
+    }
+}</code></pre>
+<div class="note">If both processes call enter_critical_section() at almost the same time, "turn" gets written by both — only the last write survives, and that decides who actually goes first.</div>
+</div>
+
+<h3 class="topic">Code 5 — Semaphore (busy-wait version)</h3>
+<div class="enblock">
+A semaphore is an integer accessed only through <code>wait()</code> (decrement) and <code>signal()</code> (increment). Binary semaphore (0/1) behaves like a mutex. Counting semaphore (any range) controls multiple-instance resources.
+</div>
+<div class="arblock">
+السيمافور متغير عددي يُستخدم فقط من خلال wait() (تنقيص) وsignal() (زيادة). السيمافور الثنائي (0 أو 1) يتصرف كقفل متبادل. السيمافور العدّاد (أي نطاق) يتحكم بموارد متعددة النسخ.
+</div>
+<div class="codecard">
+<h4>semaphore_busy_wait.c</h4>
+<pre><code>typedef int semaphore;
+
+void wait(semaphore *S) {
+    while (*S <= 0)
+        ;                     /* busy wait: wastes CPU cycles */
+    (*S)--;
+}
+
+void signal(semaphore *S) {
+    (*S)++;
+}
+
+// Usage: protecting a critical section
+semaphore mutex = 1;          // binary semaphore
+
+while (true) {
+    wait(&mutex);
+
+    /* critical section */
+
+    signal(&mutex);
+
+    /* remainder section */
+}</code></pre>
+</div>
+
+<h3 class="topic">Code 6 — Waitless (Blocking) Semaphore</h3>
+<div class="enblock">
+Avoids busy-waiting. Instead of looping, a process that must wait is <strong>blocked</strong> (placed in the semaphore's own queue, PCB state set to "waiting") and only restarted via <code>wakeup()</code> when another process calls <code>signal()</code>.
+</div>
+<div class="arblock">
+يتجنب الانتظار المُشغِل. بدلًا من التكرار، تُحجَب العملية المنتظرة (تُوضَع في طابور خاص بالسيمافور، وتتحول حالتها بـPCB إلى "منتظرة")، وتُستدعى مجددًا عبر wakeup() عند تنفيذ signal() من عملية أخرى.
+</div>
+<div class="codecard">
+<h4>semaphore_blocking.c</h4>
+<pre><code>typedef struct {
+    int value;
+    struct process *list;     // queue of PCBs waiting on this semaphore
+} semaphore;
+
+void wait(semaphore *S) {
+    S->value--;
+    if (S->value < 0) {
+        add_this_process_to(S->list);   // change this process's PCB state to "waiting"
+        block();                        // suspend; give CPU to the scheduler
+    }
+}
+
+void signal(semaphore *S) {
+    S->value++;
+    if (S->value <= 0) {
+        struct process *P = remove_one_process_from(S->list);
+        wakeup(P);                       // move P from "waiting" to "ready"
+    }
+}</code></pre>
+<div class="note">block() suspends the calling process and hands control to the scheduler. wakeup(P) moves process P from the waiting queue back to the ready queue.</div>
+</div>
+
+<h3 class="topic">Synchronization Problems</h3>
+<div class="enblock">
+<strong>Busy waiting</strong> (wastes CPU), <strong>Starvation</strong> (a process never gets the resource), <strong>Deadlock</strong> (processes wait for each other forever).
+</div>
+<div class="arblock">
+الانتظار المُشغِل (يهدر دورات المعالج)، التضوّر (عدم حصول عملية على المورد أبدًا)، والانغلاق (انتظار العمليات لبعضها للأبد).
+</div>
+
+<h3 class="topic">Exercises — Race Conditions</h3>
+<div class="codecard">
+<h4>Bank account: deposit() / withdraw()</h4>
+<div class="enblock">If husband withdraws and wife deposits at the same time, both might read the same starting balance before either writes back — one update is lost. <strong>Fix:</strong> wrap the read-modify-write of the balance in a critical section (mutex/semaphore).</div>
+<div class="arblock" style="margin-top:-6px;">إن سحب الزوج وأودعت الزوجة بنفس الوقت، قد يقرأ كلاهما الرصيد القديم نفسه قبل الكتابة، فيضيع أحد التحديثين. الحل: حماية القراءة والتعديل والكتابة بمنطقة حرجة.</div>
+</div>
+<div class="codecard">
+<h4>Online auction: bid()</h4>
+<pre><code>void bid(double amount) {
+    if (amount > highestBid)
+        highestBid = amount;
+}</code></pre>
+<div class="enblock">Two bidders calling bid() concurrently can both read the old highestBid, both pass the check, then the smaller bid can overwrite the larger one. <strong>Fix:</strong> make the read-compare-write atomic.</div>
+<div class="arblock" style="margin-top:-6px;">قد يقرأ مزايدان القيمة القديمة لـhighestBid معًا، فتُكتب القيمة الأصغر فوق الأكبر خطأ. الحل: جعل القراءة والمقارنة والكتابة عملية ذرية واحدة.</div>
+</div>
+<div class="codecard">
+<h4>Parallel array sum</h4>
+<pre><code>for (j = 1; j <= log2(N); j++) {
+    for (k = 1; k <= N; k++) {
+        if ((k + 1) % pow(2, j) == 0) {
+            values[k] += values[k - pow(2, j - 1)];
+        }
+    }
+}</code></pre>
+<div class="enblock"><strong>No race condition</strong> — at every level j, each core reads/writes a disjoint index, so no two cores touch the same memory location at the same step.</div>
+<div class="arblock" style="margin-top:-6px;">لا توجد حالة تسابق، لأنه في كل خطوة j تتعامل كل نواة مع فهرس مختلف ولا يحدث تداخل بالكتابة على نفس الموقع.</div>
+</div>
+<p><a class="backtop" href="#top">↑ top</a></p>
+</section>
+
+<!-- ============================================================ CHAPTER 7 ============================================================ -->
+<section class="chapter" id="ch7">
+<h2>Chapter 7 — Deadlocks</h2>
+
+<h3 class="topic">The 4 Necessary Conditions</h3>
+<div class="enblock">
+<ol>
+<li><strong>Mutual exclusion</strong> — only one process per resource at a time.</li>
+<li><strong>Hold and wait</strong> — holding a resource while waiting for more.</li>
+<li><strong>No preemption</strong> — resources released only voluntarily.</li>
+<li><strong>Circular wait</strong> — P0→P1→P2→...→Pn→P0, each waiting on the next.</li>
+</ol>
+All 4 must hold together for a deadlock to occur.
+</div>
+<div class="arblock">
+الاستثناء المتبادل (مورد واحد لعملية واحدة)، الحجز والانتظار (حجز مورد وانتظار آخر)، عدم السلب (تحرير طوعي فقط)، والانتظار الدائري (حلقة انتظار مغلقة). الانغلاق يحتاج الأربعة معًا.
+</div>
+
+<h3 class="topic">Resource-Allocation Graph</h3>
+<div class="enblock">
+Circles = processes, Rectangles = resources. Request edge Pi→Rj, Assignment edge Rj→Pi.
+No cycle → no deadlock. Cycle + single instance per resource → deadlock. Cycle + multiple instances → only possible deadlock.
+</div>
+<div class="arblock">
+دوائر = عمليات، مستطيلات = موارد. سهم الطلب Pi→Rj، سهم التخصيص Rj→Pi. لا دورة = لا انغلاق. دورة + نسخة واحدة لكل مورد = انغلاق حتمي. دورة + نسخ متعددة = احتمال انغلاق فقط.
+</div>
+<div class="example">
+<h4>Worked Example — Cycle Detection <span class="badge">SOLVED</span></h4>
+<div class="label">EN</div>
+P1 holds R1, requests R2. P2 holds R2, requests R1. Edges: R1→P1, P1→R2, R2→P2, P2→R1.
+Path: P1→R2→P2→R1→P1 — a cycle. Both resources have 1 instance → <strong>this is a real deadlock</strong>: P1 waits forever for R2, P2 waits forever for R1.
+<div class="label" style="margin-top:8px;">AR</div>
+<div dir="rtl" style="text-align:right;">P1 تملك R1 وتطلب R2، وP2 تملك R2 وتطلب R1، فتتكون دورة. بما أن كل مورد له نسخة واحدة، فهذا انغلاق حقيقي: كل عملية تنتظر المورد الذي تملكه الأخرى للأبد.</div>
+</div>
+
+<h3 class="topic">Handling Methods</h3>
+<div class="enblock">Prevention/Avoidance (never enter a deadlock state), Detection & Recovery (let it happen, then fix), Ignorance (assume it never happens — most general OSes).</div>
+<div class="arblock">الوقاية/التجنب، الاكتشاف والتعافي، أو التجاهل (تفترضه أغلب أنظمة التشغيل العامة).</div>
+
+<h3 class="topic">Deadlock Prevention</h3>
+<div class="enblock">Break one of the 4 conditions: allow sharable resources to bypass mutual exclusion; force requesting all resources upfront (hold-and-wait fix, costs utilization/starvation); force releasing everything if a new request can't be met (no-preemption fix); impose a total ordering on resource types (circular-wait fix).</div>
+<div class="arblock">كسر أحد الشروط الأربعة: السماح بمشاركة الموارد القابلة للمشاركة، إلزام حجز كل الموارد مسبقًا (يقلل الاستخدام ويُسبب تضوّرًا)، إلزام تحرير كل الموارد عند تعذر طلب جديد، أو فرض ترتيب ثابت لأنواع الموارد.</div>
+
+<h3 class="topic">Deadlock Avoidance — Safe State</h3>
+<div class="enblock">A state is <strong>safe</strong> if some order of ALL processes exists where each one's remaining need can be met by what's available + what earlier processes in that order will release. Safe → no deadlock. Unsafe → only a possibility.</div>
+<div class="arblock">الحالة أمنة إذا وُجد ترتيب لكل العمليات بحيث تُلبَّى حاجة كل واحدة بالموارد المتاحة + ما ستحرره العمليات السابقة لها. الحالة الأمنة تعني عدم وجود انغلاق، وغير الأمنة تعني احتمال انغلاق فقط.</div>
+
+<h3 class="topic">Banker's Algorithm</h3>
+<div class="codecard">
+<h4>Data structures</h4>
+<pre><code>int n;                 // number of processes
+int m;                  // number of resource types
+
+int Available[m];       // Available[j] = k -> k free instances of resource j
+int Max[n][m];          // Max[i][j] = k     -> Pi may request at most k of j
+int Allocation[n][m];   // Allocation[i][j]  -> Pi currently holds k of j
+int Need[n][m];         // Need[i][j] = Max[i][j] - Allocation[i][j]</code></pre>
+</div>
+<div class="codecard">
+<h4>Safety algorithm — isSafe()</h4>
+<pre><code>bool isSafe() {
+    int Work[m]    = copy(Available);
+    bool Finish[n] = { false, false, ..., false };
+
+    while (true) {
+        int i = find index where Finish[i] == false AND Need[i] <= Work;
+        if (no such i found)
+            break;
+
+        Work += Allocation[i];
+        Finish[i] = true;
+    }
+
+    return all(Finish);   // true only if every process finished
+}</code></pre>
+</div>
+<div class="codecard">
+<h4>Resource-request algorithm — requestResources(i, Request)</h4>
+<pre><code>int requestResources(int i, int Request[m]) {
+    if (Request > Need[i])
+        return ERROR;          // process asked for more than its declared max
+
+    if (Request > Available)
+        return MUST_WAIT;      // not enough resources right now
+
+    // pretend to allocate
+    Available     -= Request;
+    Allocation[i] += Request;
+    Need[i]       -= Request;
+
+    if (isSafe())
+        return GRANTED;        // keep the new state
+
+    // undo: state would be unsafe
+    Available     += Request;
+    Allocation[i] -= Request;
+    Need[i]       += Request;
+    return MUST_WAIT;
+}</code></pre>
+</div>
+
+<div class="example">
+<h4>Worked Example — Banker's Algorithm (Full) <span class="badge">SOLVED</span></h4>
+<div class="label">EN — Setup</div>
+5 processes (P0–P4), resources A(10), B(5), C(7).
+<table>
+<tr><th>Process</th><th colspan="3">Allocation (A B C)</th><th colspan="3">Max (A B C)</th><th colspan="3">Need (A B C)</th></tr>
+<tr><td>P0</td><td>0</td><td>1</td><td>0</td><td>7</td><td>5</td><td>3</td><td>7</td><td>4</td><td>3</td></tr>
+<tr><td>P1</td><td>2</td><td>0</td><td>0</td><td>3</td><td>2</td><td>2</td><td>1</td><td>2</td><td>2</td></tr>
+<tr><td>P2</td><td>3</td><td>0</td><td>2</td><td>9</td><td>0</td><td>2</td><td>6</td><td>0</td><td>0</td></tr>
+<tr><td>P3</td><td>2</td><td>1</td><td>1</td><td>2</td><td>2</td><td>2</td><td>0</td><td>1</td><td>1</td></tr>
+<tr><td>P4</td><td>0</td><td>0</td><td>2</td><td>4</td><td>3</td><td>3</td><td>4</td><td>3</td><td>1</td></tr>
+</table>
+<pre><code>Allocated total: A=7 B=2 C=5
+Available = Total - Allocated = (10-7, 5-2, 7-5) = (3, 3, 2)
+
+Run isSafe():
+  P1: Need(1,2,2) <= Work(3,3,2)? YES -> Work=(5,3,2)
+  P3: Need(0,1,1) <= Work(5,3,2)? YES -> Work=(7,4,3)
+  P4: Need(4,3,1) <= Work(7,4,3)? YES -> Work=(7,4,5)
+  P0: Need(7,4,3) <= Work(7,4,5)? YES -> Work=(7,5,5)
+  P2: Need(6,0,0) <= Work(7,5,5)? YES -> Work=(10,5,7)
+  ALL FINISHED -> SAFE.  Sequence: < P1, P3, P4, P0, P2 ></code></pre>
+<pre><code>Now P1 requests (1, 0, 2):
+  Request <= Need_P1 (1,2,2)?      YES
+  Request <= Available (3,3,2)?   YES
+  Pretend:  Available=(2,3,0)  Allocation_P1=(3,0,2)  Need_P1=(0,2,0)
+  Re-run isSafe() -> still SAFE -> GRANTED</code></pre>
+<div class="label" style="margin-top:8px;">AR</div>
+<div dir="rtl" style="text-align:right;">
+نحسب Available بطرح إجمالي المحجوز من إجمالي الموارد = (3,3,2). نطبّق خوارزمية الأمان: نبحث عن عملية يمكن تلبية حاجتها بالموارد المتاحة حاليًا، نشغّلها ونضيف ما تحرره لـWork، ونكرر. الترتيب الآمن هنا: P1 ثم P3 ثم P4 ثم P0 ثم P2 — النظام أمن. عند طلب P1 للموارد (1,0,2): نتحقق أنها لا تتجاوز Need ولا تتجاوز Available، نُحدّث الجداول مؤقتًا، ثم نعيد تشغيل خوارزمية الأمان — بما أنها لا تزال أمنة، يُمنح الطلب.
+</div>
+</div>
+
+<h3 class="topic">Deadlock Detection (single instance per resource)</h3>
+<div class="enblock">Build a wait-for graph (processes only); Pi→Pj means Pi waits for Pj. Periodically search for a cycle — found cycle = deadlock. Cost: O(n²).</div>
+<div class="arblock">يُبنى رسم "الانتظار من أجل" (عمليات فقط)؛ Pi→Pj تعني انتظار Pi لـPj. يُفحص دوريًا بحثًا عن دورة؛ وجودها يعني انغلاقًا. التكلفة O(n²).</div>
+<p><a class="backtop" href="#top">↑ top</a></p>
+</section>
+
+<!-- ============================================================ CHAPTER 9 ============================================================ -->
+<section class="chapter" id="ch9">
+<h2>Chapter 9 — Main Memory (Part 1 + Part 2)</h2>
+
+<h3 class="topic">Address Binding</h3>
+<div class="enblock">
+<strong>Compile time</strong> (fast, fixed location). <strong>Load time</strong> (relocatable code, bound at load). <strong>Execution time</strong> (process can move while running; needs base/limit registers; slow but flexible).
+<strong>Logical address</strong> (CPU-generated) vs <strong>Physical address</strong> (seen by memory unit) — same for compile/load binding, differ for execution-time binding.
+</div>
+<div class="arblock">
+زمن الترجمة (موقع ثابت، سريع)، زمن التحميل (كود قابل لإعادة التوضع)، زمن التنفيذ (يحتاج سجلات قاعدة وحد، بطيء لكن مرن). العنوان المنطقي يختلف عن الفعلي فقط في حالة الربط وقت التنفيذ.
+</div>
+
+<h3 class="topic">MMU & Dynamic Loading/Linking</h3>
+<div class="enblock">
+<strong>MMU</strong>: maps logical→physical at run time by adding a Relocation/Base register value to every address. <strong>Dynamic loading</strong>: a routine loads only when called. <strong>Dynamic linking</strong>: shared libraries linked at run time (Windows .DLL, Linux .so, macOS .dylib).
+</div>
+<div class="arblock">
+وحدة إدارة الذاكرة MMU تُترجم العنوان المنطقي للفعلي بإضافة قيمة سجل القاعدة. التحميل الديناميكي: لا يُحمَّل روتين حتى استدعائه. الربط الديناميكي: ربط مكتبات مشتركة وقت التشغيل.
+</div>
+
+<h3 class="topic">Swapping</h3>
+<div class="formula">Swap time = (process size / transfer rate) × 2</div>
+<div class="example">
+<h4>Worked Example — Swap Time <span class="badge">SOLVED</span></h4>
+<div class="label">EN</div>
+Process = 100 MB, HDD rate = 50 MB/s.
+<pre><code>Swap time = (100 / 50) x 2 = 2 x 2 = 4 sec = 4000 ms</code></pre>
+<div class="label" style="margin-top:8px;">AR</div>
+<div dir="rtl" style="text-align:right;">حجم العملية 100 ميغابايت، سرعة القرص 50 ميغابايت/ثانية. زمن التبديل = (100÷50)×2 = 4 ثوانٍ. الضرب في 2 لأن العملية تُسحب وتُعاد مرتين.</div>
+</div>
+
+<h3 class="topic">Fragmentation & Hole-Fitting</h3>
+<div class="enblock">
+<strong>External fragmentation</strong> — enough free memory total, but scattered (fixed by compaction or paging). <strong>Internal fragmentation</strong> — allocated block bigger than needed, waste inside the block itself.
+<strong>First-fit</strong>: first hole big enough. <strong>Best-fit</strong>: smallest hole big enough (least leftover). <strong>Worst-fit</strong>: largest hole (most leftover).
+</div>
+<div class="arblock">
+التجزّؤ الخارجي: مساحة كافية إجماليًا لكنها مبعثرة (يُحل بالدمج أو الترقيم). التجزّؤ الداخلي: كتلة أكبر من الحاجة فيضيع جزء داخلها. الملاءمة الأولى: أول فجوة كافية. الملاءمة الأفضل: أصغر فجوة كافية. الملاءمة الأسوأ: أكبر فجوة.
+</div>
+<div class="example">
+<h4>Worked Example — First-Fit / Best-Fit / Worst-Fit <span class="badge">SOLVED</span></h4>
+<div class="label">EN — Setup</div>
+Holes: 350, 350, 200, 750, 250 (KB). Requests in order: 215, 500, 550, 100, 375 (KB).
+<pre><code>FIRST-FIT:
+215 -> Hole1(350) fits      -> Hole1 left = 135
+500 -> Hole4(750) fits      -> Hole4 left = 250
+550 -> no hole >= 550       -> CANNOT BE PLACED
+100 -> Hole1(135) fits      -> Hole1 left = 35
+375 -> no hole >= 375       -> CANNOT BE PLACED
+
+BEST-FIT (smallest hole that still fits):
+215 -> Hole5(250) -> left 35
+500 -> Hole4(750) -> left 250
+550 -> no hole >= 550       -> CANNOT BE PLACED
+100 -> Hole3(200) -> left 100
+375 -> no hole >= 375       -> CANNOT BE PLACED
+
+WORST-FIT (largest hole):
+215 -> Hole4(750) -> left 535
+500 -> Hole4(535) -> left 35
+550 -> largest left is 350  -> CANNOT BE PLACED
+100 -> Hole2(350) -> left 250
+375 -> largest left is 250  -> CANNOT BE PLACED</code></pre>
+<div class="label">AR</div>
+<div dir="rtl" style="text-align:right;">الفجوات بالترتيب: 350، 350، 200، 750، 250. الملاءمة الأولى تختار أول فجوة كافية من بداية القائمة، الأفضل تختار أصغر فجوة كافية، والأسوأ تختار أكبر فجوة. الطلب 550 يفشل بكل الطرق الثلاث لعدم وجود فجوة كافية له بعد تخصيص الطلبين الأولين — وهذا يوضح أثر التجزّؤ الخارجي.</div>
+</div>
+
+<h3 class="topic">Paging — Visual Diagram</h3>
+<div class="enblock">
+Paging removes external fragmentation by letting a process's logical memory be <strong>non-contiguous</strong>. Physical memory splits into fixed-size <strong>frames</strong>; logical memory splits into same-size <strong>pages</strong>. A <strong>page table</strong> maps page number → frame number.
+</div>
+<div class="formula">Physical address = (Frame number × Frame size) + Offset</div>
+<div class="arblock">
+الترقيم يزيل التجزّؤ الخارجي بجعل الذاكرة المنطقية للعملية غير متجاورة. تُقسَّم الذاكرة الفعلية لإطارات ثابتة الحجم، والمنطقية لصفحات بنفس الحجم. جدول الصفحات يربط رقم الصفحة برقم الإطار. العنوان الفعلي = (رقم الإطار × حجم الإطار) + الإزاحة.
+</div>
+
+<div class="svgbox">
+<svg viewBox="0 0 860 540" xmlns="http://www.w3.org/2000/svg" width="100%">
+  <defs>
+    <marker id="arrowOrange" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#ff9d5e"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#5eb1ff"/>
+    </marker>
+  </defs>
+<h3 class="topic">Memory Protection & Hardware Registers</h3>
+<div class="enblock">
+<strong>Memory Stall:</strong> CPU access to main memory takes multiple cycles, causing the processor to stall. Fixed by hardware-managed cache.<br>
+<strong>Hardware Protection:</strong> Every logical address generated in user mode is checked by hardware: <code>Base <= Address < Base + Limit</code>. Any violation causes a TRAP to the OS.
+</div>
+<div class="arblock">
+<strong>توقف المعالج (Memory Stall):</strong> الوصول للذاكرة الرئيسية يستغرق دورات متعددة مما يجبر المعالج على التوقف؛ ويتم حلها عبر الذاكرة المخبئية (Cache).<br>
+<strong>حماية الهاردوير:</strong> يتم فحص كل عنوان منطقي عبر الهاردوير للتأكد من وقوعه في النطاق القانوني للعملية: <code>Base <= العنوان < Base + Limit</code>، وأي تجاوز يولد Trap للنظام لمنع تعديل بيانات النواة.
+</div>
+  <text x="430" y="22" text-anchor="middle" font-size="16" font-weight="bold" fill="#5eb1ff">Logical → Physical Address Translation (worked example)</text>
+  <text x="430" y="40" text-anchor="middle" font-size="11" fill="#9aa3b2">page size = 4 bytes, physical memory = 32 bytes (8 frames), logical address = 7</text>
+
+  <!-- Logical address -->
+  <text x="190" y="62" text-anchor="middle" font-size="11" fill="#9aa3b2">Step 1 — CPU generates the logical address (binary 0111)</text>
+  <rect x="60" y="70" width="120" height="55" rx="6" fill="#241a14" stroke="#ff9d5e" stroke-width="1.5"/>
+  <text x="120" y="100" text-anchor="middle" font-size="20" font-weight="bold" fill="#ff9d5e" font-family="monospace">01</text>
+  <text x="120" y="118" text-anchor="middle" font-size="10" fill="#ff9d5e">Page number p = 1</text>
+  <rect x="200" y="70" width="120" height="55" rx="6" fill="#13261b" stroke="#9be39b" stroke-width="1.5"/>
+  <text x="260" y="100" text-anchor="middle" font-size="20" font-weight="bold" fill="#9be39b" font-family="monospace">11</text>
+  <text x="260" y="118" text-anchor="middle" font-size="10" fill="#9be39b">Offset d = 3</text>
+
+  <line x1="120" y1="125" x2="120" y2="150" stroke="#ff9d5e" stroke-width="2" marker-end="url(#arrowOrange)"/>
+
+  <!-- Page table -->
+  <text x="190" y="148" text-anchor="middle" font-size="12" fill="#e8eaf0" font-weight="bold">Step 2 — look up Page Table</text>
+  <rect x="60" y="155" width="260" height="135" rx="8" fill="#171a21" stroke="#2a2f3a"/>
+  <rect x="72" y="166" width="236" height="24" fill="#1d2129" stroke="#2a2f3a"/>
+  <text x="190" y="182" text-anchor="middle" font-size="10" fill="#9aa3b2">Page  →  Frame</text>
+
+  <rect x="72" y="192" width="236" height="24" fill="#171a21" stroke="#2a2f3a"/>
+  <text x="190" y="208" text-anchor="middle" font-size="11" fill="#5c6270">Page 0  →  Frame ?  (not given)</text>
+
+  <rect x="72" y="218" width="236" height="26" fill="#241a14" stroke="#ff9d5e" stroke-width="2"/>
+  <text x="140" y="235" text-anchor="middle" font-size="12" font-weight="bold" fill="#ff9d5e">Page 1</text>
+  <text x="190" y="235" text-anchor="middle" font-size="12" fill="#e8eaf0">→</text>
+  <text x="250" y="235" text-anchor="middle" font-size="12" font-weight="bold" fill="#5eb1ff">Frame 6</text>
+
+  <rect x="72" y="246" width="236" height="24" fill="#171a21" stroke="#2a2f3a"/>
+  <text x="190" y="262" text-anchor="middle" font-size="11" fill="#5c6270">Page 2  →  Frame ?  (not given)</text>
+
+  <rect x="72" y="270" width="236" height="13" fill="#171a21" stroke="none"/>
+  <text x="190" y="280" text-anchor="middle" font-size="10" fill="#5c6270">Page 3  →  Frame ?  (not given)</text>
+
+  <line x1="320" y1="231" x2="455" y2="333" stroke="#5eb1ff" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- Physical memory -->
+  <text x="630" y="62" text-anchor="middle" font-size="12" fill="#e8eaf0" font-weight="bold">Step 3 — Physical Memory (8 frames × 4 bytes = 32 bytes)</text>
+  <rect x="460" y="70" width="340" height="334" rx="8" fill="#171a21" stroke="#2a2f3a"/>
+
+  <!-- frames 0-5 plain rows -->
+  <g font-size="11" fill="#9aa3b2" font-family="monospace">
+    <rect x="470" y="80" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
+    <text x="630" y="102" text-anchor="middle">Frame 0   (bytes 0–3)</text>
+
+    <rect x="470" y="118" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
+    <text x="630" y="140" text-anchor="middle">Frame 1   (bytes 4–7)</text>
+
+    <rect x="470" y="156" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
+    <text x="630" y="178" text-anchor="middle">Frame 2   (bytes 8–11)</text>
+
+    <rect x="470" y="194" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
+    <text x="630" y="216" text-anchor="middle">Frame 3   (bytes 12–15)</text>
+
+    <rect x="470" y="232" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
+    <text x="630" y="254" text-anchor="middle">Frame 4   (bytes 16–19)</text>
+
+    <rect x="470" y="270" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
+    <text x="630" y="292" text-anchor="middle">Frame 5   (bytes 20–23)</text>
+  </g>
+
+  <!-- frame 6 (highlighted, split into 4 bytes) -->
+  <rect x="470" y="308" width="320" height="50" fill="#0e2433" stroke="#5eb1ff" stroke-width="2"/>
+  <text x="630" y="322" text-anchor="middle" font-size="11" fill="#5eb1ff" font-weight="bold">Frame 6  (bytes 24–27)  ← target frame</text>
+
+  <rect x="470" y="328" width="80" height="26" fill="#13202b" stroke="#2a2f3a"/>
+  <text x="510" y="346" text-anchor="middle" font-size="11" font-family="monospace" fill="#9aa3b2">24</text>
+  <rect x="550" y="328" width="80" height="26" fill="#13202b" stroke="#2a2f3a"/>
+  <text x="590" y="346" text-anchor="middle" font-size="11" font-family="monospace" fill="#9aa3b2">25</text>
+  <rect x="630" y="328" width="80" height="26" fill="#13202b" stroke="#2a2f3a"/>
+  <text x="670" y="346" text-anchor="middle" font-size="11" font-family="monospace" fill="#9aa3b2">26</text>
+  <rect x="710" y="328" width="80" height="26" fill="#13261b" stroke="#9be39b" stroke-width="2"/>
+  <text x="750" y="346" text-anchor="middle" font-size="12" font-family="monospace" font-weight="bold" fill="#9be39b">27</text>
+
+  <text x="630" y="368" text-anchor="middle" font-size="10" fill="#9be39b">offset d = 3 (4th byte) → physical address 27</text>
+
+  <rect x="470" y="364" width="320" height="36" fill="#1a1e26" stroke="#2a2f3a"/>
+  <text x="630" y="386" text-anchor="middle" font-size="11" fill="#9aa3b2" font-family="monospace">Frame 7   (bytes 28–31)</text>
+
+  <!-- formula bar -->
+  <rect x="60" y="420" width="740" height="48" rx="6" fill="#0b0d11" stroke="#ff9d5e" stroke-dasharray="4,3"/>
+  <text x="430" y="449" text-anchor="middle" font-size="14" font-family="monospace" fill="#ffd9a8">Physical address = (Frame × Frame size) + Offset = (6 × 4) + 3 = 27</text>
+
+  <!-- legend -->
+  <rect x="60" y="488" width="12" height="12" fill="#241a14" stroke="#ff9d5e"/>
+  <text x="78" y="498" font-size="11" fill="#9aa3b2">Page number / Page table</text>
+  <rect x="280" y="488" width="12" height="12" fill="#0e2433" stroke="#5eb1ff"/>
+  <text x="298" y="498" font-size="11" fill="#9aa3b2">Frame number / Physical frame</text>
+  <rect x="540" y="488" width="12" height="12" fill="#13261b" stroke="#9be39b"/>
+  <text x="558" y="498" font-size="11" fill="#9aa3b2">Offset (byte within the frame)</text>
+</svg>
+</div>
+<div class="note">AR — يوضح الرسم تتبع العنوان المنطقي 7 (0111): يُقسَّم إلى رقم الصفحة (01=1) بالبرتقالي والإزاحة (11=3) بالأخضر، ثم يُستخدم رقم الصفحة للبحث في جدول الصفحات فنجد أنها تقابل الإطار 6 (بالأزرق)، ثم نذهب لذلك الإطار في الذاكرة الفعلية ونُضيف الإزاحة لنحصل على البايت رقم 27 بالضبط (مظلل بالأخضر).</div>
+
+<h3 class="topic">Page Table Implementation & TLB</h3>
+<div class="enblock">
+Each process has its own page table; <strong>PTBR</strong> points to it (updated every context switch). Without help, every access = 2 memory accesses. The <strong>TLB</strong> caches page→frame mappings for near-instant lookup.
+</div>
+<div class="arblock">
+كل عملية لها جدول صفحات خاص؛ PTBR يُشير له ويتغير عند كل تبديل سياق. بدون تحسين، كل وصول يحتاج وصولين للذاكرة. الـTLB يخزّن مؤقتًا روابط صفحة→إطار لاستدعاء فوري تقريبًا.
+</div>
+<div class="example">
+<h4>Worked Example — Effective Access Time (EAT) <span class="badge">SOLVED</span></h4>
+<div class="formula">EAT = (Hit ratio × hit time) + (Miss ratio × miss time)</div>
+Memory access = 10 ns. Hit = 10 ns. Miss = 20 ns.
+<pre><code>Hit ratio 80%: EAT = 0.80x10 + 0.20x20 = 12 ns   (20% slowdown)
+Hit ratio 99%: EAT = 0.99x10 + 0.01x20 = 10.1 ns (only 1% slowdown)</code></pre>
+<div class="label">AR</div>
+<div dir="rtl" style="text-align:right;">زمن الوصول للذاكرة 10 نانو. مع نسبة نجاح 80%: الزمن الفعلي = 12 نانو (تباطؤ 20%). مع نسبة نجاح 99%: الزمن الفعلي = 10.1 نانو (تباطؤ 1% فقط).</div>
+</div>
+
+<h3 class="topic">Valid/Invalid Bit, Hierarchical Paging, Shared Pages, Segmentation</h3>
+<div class="enblock">
+<strong>Valid/invalid bit</strong> marks if a page belongs to the process's address space (access to "invalid" → trap). <strong>Hierarchical (two-level) paging</strong> pages the page table itself (address splits into p1, p2, offset) for very large address spaces. <strong>Shared pages</strong>: one physical frame referenced by multiple page tables (e.g. shared read-only code). <strong>Segmentation</strong>: like paging but based on the user's logical view (main program, functions, stack = variable-size segments); a segment table maps segment number → base + length.
+</div>
+<div class="arblock">
+بت الصلاحية يحدد إن كانت الصفحة جزءًا حقيقيًا من مساحة عنونة العملية (الوصول لصفحة غير صالحة يُسبب Trap). الترقيم الهرمي يُرقّم جدول الصفحات نفسه للمساحات الكبيرة جدًا. الصفحات المشتركة: إطار فعلي واحد تُشير له عدة جداول صفحات (كود مشترك للقراءة فقط). التجزيء: شبيه بالترقيم لكنه يعتمد على رؤية المستخدم المنطقية (برنامج رئيسي، دوال، مكدس = مقاطع متغيرة الحجم)؛ جدول المقاطع يربط رقم المقطع بعنوان القاعدة وطوله.
+</div>
+<p><a class="backtop" href="#top">↑ top</a></p>
+</section>
+
+<footer>
+ملخص تنين — Ch2 OS Structures, Ch3 Processes, Ch4 Threads, Ch5 CPU Scheduling (p1+p2), Ch6 Synchronization (full code), Ch7 Deadlocks, Ch9 Memory Management (p1+p2). Chapter 1 omitted by request.
+</footer>
+
+</div>
+</body>
+</html>
